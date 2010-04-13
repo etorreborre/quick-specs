@@ -28,4 +28,11 @@ class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Su
       m3.apply(Adder(2), 3) must_== 5
     }
   }
+  "A Methods object" can {
+    "be tagged so that only accepted methods are returned with the get method" in {
+      val methods = Methods.create[Object].accept("toString")
+      methods.get must have(_.methodName == "toString")
+      methods.get must notHave(_.methodName == "equals")
+    }
+  }
 }

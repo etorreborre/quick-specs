@@ -9,8 +9,8 @@ trait MethodsFactory {
 case class Methods(methods: List[ScalaMethod]) extends Tagged {
   def get: List[ScalaMethod] = methods.filter(_.isAccepted)
   def get(methodName: String) = methods.find(_.methodName == methodName).get
-  override def taggedComponents = methods 
   def methodByName(name: String) = get.find(_.methodName == name)
+  override def taggedComponents = methods 
 }
 case object Methods {
   def create(a: AnyRef): Methods = create(a.getClass)
