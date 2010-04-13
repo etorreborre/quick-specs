@@ -1,7 +1,7 @@
 package org.specs.quick
 
 case class EquivalenceClass(expressions: List[Expression]) {
-  def equations = expressions.map(_.toString).mkString(" == ")
+  def equations = expressions.map(_.show).mkString(" == ")
   def evaluate: scala.collection.mutable.Map[Any, List[Expression]] = {
     expressions.foldLeft(new scala.collection.mutable.HashMap[Any, List[Expression]]) { (res, cur) =>
       val evaluated = cur.evaluate

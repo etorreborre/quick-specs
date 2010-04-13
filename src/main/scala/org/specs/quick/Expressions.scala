@@ -4,6 +4,7 @@ trait Expressions {
   implicit def toVariableExpression[A](v: Variable[A]) = VariableExpression(v)
 }
 trait Expression {
+  def show: String = toString
   def getType: String
   def apply(expressions: List[Expression]): List[Expression] = List(this)
   def evaluate: Any
@@ -45,6 +46,6 @@ case class MethodExpression(m: ScalaMethod) extends Expression {
 }
 case class VariableExpression[A](variable: Variable[A]) extends Expression {
   def getType = variable.getType
-  override def toString = variable.toString
+  override def toString = variable.show
   def evaluate = variable.value.get
 }
