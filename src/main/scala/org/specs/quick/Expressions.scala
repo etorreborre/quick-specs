@@ -12,7 +12,9 @@ trait Expression {
 case class ComposedExpression(main: MethodExpression, other: List[Expression]) extends Expression {
   def getType = main.getType
   override def toString = main.toString + other.mkString("(", ", ", ")")
-  def evaluate = main.applyValues(other.map(_.evaluate))
+  def evaluate = {
+    main.applyValues(other.map(_.evaluate))
+  }
 }
 case class MethodExpression(m: ScalaMethod) extends Expression {
   override def toString = m.methodName
@@ -30,8 +32,8 @@ case class MethodExpression(m: ScalaMethod) extends Expression {
       }
     }
   }
-  def evaluate = applyValues(Nil)
-  def applyValues(values: List[Any]){
+  def evaluate = applyValues(List(m.instance))
+  def applyValues(values: List[Any]) = {
     m.apply(values)
   }
   def applicableParameters(expressions: List[Expression]): List[List[Expression]] = {

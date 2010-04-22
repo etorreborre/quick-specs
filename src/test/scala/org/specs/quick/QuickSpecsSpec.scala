@@ -2,10 +2,12 @@ package org.specs.quick
 import org.specs._
 import org.scalacheck._
 
+object QuickSpecsTest extends QuickSpecsSpec
 class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   object Lists {
     def ++[T](l: List[T], l2: List[T]) = l ::: l2
     def nil[T]: List[T] = Nil
+    override def toString = "Lists (" + hashCode + ")" 
   }
   val plusPlus: ScalaMethod = Lists.methodByName("++").get
   implicit val params = Gen.defaultParams
@@ -35,7 +37,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   "applicable parameters for a given method" should {
     "extract the same parameter types" in {
       val exp1 = new Expression { 
-        def getType = "scala.List"
+        def getType = "scala.collection.immutable.List"
         override def toString = getType
         def evaluate = Nil
       }
@@ -45,7 +47,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   "applying expressions to a given expression" should {
     "return a list of expressions" in {
       val exp1 = new Expression { 
-        def getType = "scala.List"
+        def getType = "scala.collection.immutable.List"
         override def toString = getType
         def evaluate = Nil
       }
@@ -56,7 +58,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   "Evaluating expressions" should {
     "give a random value to a variable" in {
       val v1 = new Variable[Int]("v1")
-      (1 to 10).toList.map(i => v1.evaluate).pp.exists(_ < 0) must beTrue 
+      (1 to 10).toList.map(i => v1.evaluate).exists(_ < 0) must beTrue 
     }
   }
 }

@@ -1,7 +1,8 @@
 package org.specs.quick
 import org.specs._
+import org.specs.util._
 
-class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Sugar {
+class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Sugar with DataTables {
   "A ScalaMethod" can {
     "be created from an object" in {
       Methods.create(new Object).methods must have size(9)
@@ -33,6 +34,19 @@ class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Su
       val methods = Methods.create[Object].accept("toString")
       methods.get must have(_.methodName == "toString")
       methods.get must notHave(_.methodName == "equals")
+    }
+    "return only the object own methods and not the inherited ones with the getOwn method" in {
+      Methods.create(new { def add = () }).getOwn.apply(0).methodName must_== "add"
+    }
+  }
+  "The name of a ScalaMethod" should {
+    "replace obfuscated characters when displaying the method name" in {
+      class o { override def toString = "object" }
+      "object"                     | "methodName" |>
+        new o { def ++ = () }      ! "++"         |
+        new o { def -- = () }      ! "--"         | { (o: Object, m: String) =>
+          Methods.create(o).getOwn(0).methodName must_== m
+      }
     }
   }
 }
