@@ -13,7 +13,11 @@ case class ComposedExpression(main: MethodExpression, other: List[Expression]) e
   def getType = main.getType
   override def toString = main.toString + other.mkString("(", ", ", ")")
   def evaluate = {
-    main.applyValues(other.map(_.evaluate))
+    try {
+      main.applyValues(other.map(_.evaluate))
+    } catch {
+      case e => e
+    }
   }
 }
 case class MethodExpression(m: ScalaMethod) extends Expression {

@@ -37,7 +37,7 @@ case class ScalaMethod(instance: AnyRef, m: Method) extends Tagged with Sugar {
   def apply(values: List[Any]): Any = {
     val valuesMinusInstance = values.filterNot(_ == instance)
     if (valuesMinusInstance.isEmpty) {
-      m.invoke(instance)
+     m.invoke(instance) 
     }
     else {
       val parameters = valuesMinusInstance.toArray.map(_.asInstanceOf[Object])
