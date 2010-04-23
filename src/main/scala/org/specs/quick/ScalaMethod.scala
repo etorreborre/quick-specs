@@ -3,7 +3,7 @@ import java.lang.reflect.Method
 import org.specs.specification.Tagged
 import org.specs.Sugar
 import org.specs.util.Classes
-import reflect.{NameTransformer, Manifest}
+import reflect.{NameTransformer, ClassManifest}
 
 trait MethodsFactory {
   implicit def toMethods(a: AnyRef) = Methods.create(a)
@@ -23,8 +23,8 @@ case class Methods(methods: List[ScalaMethod]) extends Tagged {
 }
 case object Methods extends Classes {
   def create(a: AnyRef): Methods = create(a, a.getClass)
-  def create[A <: AnyRef](implicit m: Manifest[A]): Methods = {
-    create(super.create(m.erasure.getName), m.erasure)
+  def create[A <: AnyRef](implicit m: ClassManifest[A]): Methods = {
+    create(super.tryToCreateObject(m.erasure.getName).get, m.erasure)
   }
   def create(a: AnyRef, c: Class[_]) = Methods(c.getMethods.toList.map(ScalaMethod(a, _)))
 }
@@ -40,8 +40,8 @@ case class ScalaMethod(instance: AnyRef, m: Method) extends Tagged with Sugar {
      m.invoke(instance) 
     }
     else {
-      val parameters = valuesMinusInstance.toArray.map(_.asInstanceOf[Object])
-      m.invoke(instance, parameters:_*)
+	  val parameters = valuesMinusInstance.toArray.map(_.asInstanceOf[Object])
+	  m.invoke(instance, parameters:_*)
     }
   }
   tag(methodName)

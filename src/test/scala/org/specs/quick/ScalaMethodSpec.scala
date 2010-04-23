@@ -22,11 +22,11 @@ class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Su
       m2.toString must_== "equals"
     }
     "have an apply method applying a list of values to the method" in {
-      case class Adder(i: Int) {
-        def addOne(l: Int) = i + l
+      case class Adder() {
+        def addOne(o: String) = "hello " + o
       }
       val m3 = Methods.create[Adder].get("addOne")
-      m3.apply(Adder(2), 3) must_== 5
+      m3.apply("world") must_== "hello world"
     }
   }
   "A Methods object" can {

@@ -1,7 +1,8 @@
 package org.specs.quick
 
-case class EquivalenceClass(expressions: List[Expression]) {
-  def equations = expressions.map(_.show).mkString(" == ")
+case class EquivalenceClass(expressions: List[Expression], result: Option[Any]) {
+  def this(expressions: List[Expression]) = this(expressions, None)
+  def equations = "Equivalence: " + result + " -> " +expressions.map(_.show).mkString(" == ")
   def evaluate: scala.collection.mutable.Map[Any, List[Expression]] = {
     expressions.foldLeft(new scala.collection.mutable.HashMap[Any, List[Expression]]) { (res, cur) =>
       val evaluated = cur.evaluate
@@ -13,7 +14,9 @@ case class EquivalenceClass(expressions: List[Expression]) {
     
   def partition(n: Int) = {
     (1 to n).foldLeft(List[EquivalenceClass]()) { (res, cur) =>
-      evaluate.values.map(expressions => EquivalenceClass(expressions)).toList ::: res
-    }  
+      evaluate.map { e =>
+        EquivalenceClass(e._2, Some(e._1)) 
+      }.toList ::: res
+    }
   }
 }

@@ -21,7 +21,7 @@ trait QuickSpecs extends MethodsFactory with Expressions with ScalaCheck { this:
     expressions.flatMap(_.apply(expressions))
   }
   def classify(expressions: List[Expression]) = {
-    EquivalenceClass(expressions).partition(2)
+    new EquivalenceClass(expressions).partition(4)
   }
   def prune(classes: List[EquivalenceClass]) = classes
 }

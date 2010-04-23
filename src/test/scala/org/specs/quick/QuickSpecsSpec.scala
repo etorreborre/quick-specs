@@ -1,6 +1,7 @@
 package org.specs.quick
 import org.specs._
 import org.scalacheck._
+import org.scalacheck.util._
 
 object QuickSpecsTest extends QuickSpecsSpec
 class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
@@ -10,7 +11,8 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
     override def toString = "Lists (" + hashCode + ")" 
   }
   val plusPlus: ScalaMethod = Lists.methodByName("++").get
-  implicit val params = Gen.defaultParams
+  implicit val params = Gen.Params(2,StdRand)
+  implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))
   val xs = new Variable[List[Int]]("xs")
   val ys = new Variable[List[Int]]("ys")
   "creating quick specs" should {
