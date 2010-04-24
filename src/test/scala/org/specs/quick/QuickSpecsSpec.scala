@@ -13,8 +13,8 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   val plusPlus: ScalaMethod = Lists.methodByName("++").get
   implicit val params = Gen.Params(2,StdRand)
   implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))
-  val xs = new Variable[List[Int]]("xs")
-  val ys = new Variable[List[Int]]("ys")
+  val xs = Variable[List[Int]]("xs")
+  val ys = Variable[List[Int]]("ys")
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {
       quick(Lists.accept("\\+\\+", "nil"), xs) must_==("++")
@@ -59,7 +59,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   }
   "Evaluating expressions" should {
     "give a random value to a variable" in {
-      val v1 = new Variable[Int]("v1")
+      val v1 = Variable[Int]("v1")
       (1 to 10).toList.map(i => v1.evaluate).exists(_ < 0) must beTrue 
     }
   }

@@ -53,5 +53,5 @@ case class MethodExpression(m: ScalaMethod) extends Expression {
 case class VariableExpression[A](variable: Variable[A]) extends Expression {
   def getType = variable.getType
   override def toString = variable.show
-  def evaluate = variable.value.get
+  def evaluate = variable.value
 }
