@@ -10,7 +10,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
     def nil[T]: List[T] = Nil
     override def toString = "Lists (" + hashCode + ")" 
   }
-  val plusPlus: ScalaMethod = Lists.methodByName("++").get
+  val plusPlus: ScalaMethod = Lists.find("++").get
   implicit val params = Gen.Params(2,StdRand)
   implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))
   val xs = Variable[List[Int]]("xs")

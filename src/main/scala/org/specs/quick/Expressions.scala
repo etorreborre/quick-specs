@@ -36,7 +36,7 @@ case class MethodExpression(m: ScalaMethod) extends Expression {
       }
     }
   }
-  def evaluate = applyValues(List(m.instance))
+  def evaluate = applyValues(List())
   def applyValues(values: List[Any]) = {
     m.apply(values)
   }

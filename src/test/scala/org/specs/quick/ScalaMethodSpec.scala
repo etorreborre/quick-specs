@@ -1,6 +1,7 @@
 package org.specs.quick
 import org.specs._
 import org.specs.util._
+import org.scalacheck._
 
 class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Sugar with DataTables {
   "A ScalaMethod" can {
@@ -49,4 +50,13 @@ class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Su
       }
     }
   }
+}
+trait ObjectMethods extends GenerationParams { 
+  implicit val arbObjectMethods: Arbitrary[ObjectMethod]= Arbitrary(ObjectMethod(new Object, classOf[Object].getDeclaredMethods().apply(0)))
+}
+trait InstanceMethods extends GenerationParams {
+  implicit val arbInstanceMethods: Arbitrary[InstanceMethod]= Arbitrary(InstanceMethod(classOf[Object].getDeclaredMethods().apply(0)))
+}
+trait ScalaMethods extends ObjectMethods with InstanceMethods {
+  implicit val anyScalaMethod: Arbitrary[ScalaMethod]= Arbitrary(Gen.oneOf(arbObjectMethods.arbitrary, arbInstanceMethods.arbitrary))
 }

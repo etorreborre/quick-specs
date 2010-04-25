@@ -9,7 +9,7 @@ class VariableSpec extends SpecificationWithJUnit {
 }
 object AllVariablesSpec extends Specification with ScalaCheck with AnyVariables {
   "There are 2 kinds of variables: arbitrary and constants\n" +
-  "  A variable" should {
+  "A variable" should {
     "have a getType method returning the class name of its type" verifies { v: Variable[Int] =>
 	  v.getType contains("int") 
 	}
