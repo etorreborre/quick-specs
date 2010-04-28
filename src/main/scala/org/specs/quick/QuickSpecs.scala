@@ -5,9 +5,9 @@ import org.scalacheck._
 
 trait QuickSpecs extends MethodsFactory with Expressions with ScalaCheck { this: Specification =>
 
-  def quick(a: AnyRef, variable: Variable[_]): String = quick(Methods.create(a), variable)
-  def quick(methods: Methods, variable: Variable[_]): String = quick(methods, List(variable))
-  def quick(methods: Methods, variables: List[Variable[_]]): String = {
+  def quick(a: AnyRef, variable: Variable[_]): String = quick(ScalaMethods.create(a), variable)
+  def quick(methods: ScalaMethods, variable: Variable[_]): String = quick(methods, List(variable))
+  def quick(methods: ScalaMethods, variables: List[Variable[_]]): String = {
     val combinations: List[Expression] = combine(methods.get, variables)
     val equivalenceClasses: List[EquivalenceClass] = classify(combinations)
     val pruned: List[EquivalenceClass] = prune(equivalenceClasses)

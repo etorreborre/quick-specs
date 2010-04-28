@@ -4,11 +4,11 @@ import org.specs.util._
 import org.scalacheck._
 
 class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Sugar with DataTables {
-  val methodsForObject = Methods.create[Object]
+  val methodsForObject = ScalaMethods.create[Object]
   "A ScalaMethods object grouping several ScalaMethods" can {
     "be created from a scala object" in {
       object AScalaObject
-      Methods.create(AScalaObject).methods must have size(9)
+      ScalaMethods.create(AScalaObject).methods must have size(9)
     }
     "be created from a type" in {
       methodsForObject.methods must have (_.methodName == "toString")
@@ -32,27 +32,27 @@ class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Su
         def add1(i: Int) = "hello " + i
       }
       "if the ScalaMethods object has been created from a type, the values must provide an instance as the first value" >> {
-        val addOneMethod = Methods.create[Adder].get("addOne")
+        val addOneMethod = ScalaMethods.create[Adder].get("addOne")
         addOneMethod.apply(Adder(), "world") must_== "hello world"
       }
       "if the ScalaMethods object has been created from an instance, the values must provide only the parameters" >> {
-        val addOneMethod = Methods.create(new Adder).get("addOne")
+        val addOneMethod = ScalaMethods.create(new Adder).get("addOne")
         addOneMethod.apply("world") must_== "hello world"
       }
       "the passed values can be AnyVal too" >> {
-        val add1Method = Methods.create(new Adder).get("add1")
+        val add1Method = ScalaMethods.create(new Adder).get("add1")
         add1Method.apply(1) must_== "hello 1"
       }
     }
   }
   "A ScalaMethods object" can {
     "be tagged so that only accepted methods are returned with the get method" in {
-      val methods = Methods.create[Object].accept("toString")
+      val methods = ScalaMethods.create[Object].accept("toString")
       methods.get must have(_.methodName == "toString")
       methods.get must notHave(_.methodName == "equals")
     }
     "return only the object own methods and not the inherited ones with the getOwn method" in {
-      Methods.create(new { def add = () }).getOwn.apply(0).methodName must_== "add"
+      ScalaMethods.create(new { def add = () }).getOwn.apply(0).methodName must_== "add"
     }
   }
   "The name of a ScalaMethod" should {
@@ -61,7 +61,7 @@ class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Su
       "object"                     | "methodName" |>
         new o { def ++ = () }      ! "++"         |
         new o { def -- = () }      ! "--"         | { (o: Object, m: String) =>
-          Methods.create(o).getOwn(0).methodName must_== m
+          ScalaMethods.create(o).getOwn(0).methodName must_== m
       }
     }
   }
@@ -72,6 +72,6 @@ trait ObjectMethods extends GenerationParams {
 trait InstanceMethods extends GenerationParams {
   implicit val arbInstanceMethods: Arbitrary[InstanceMethod]= Arbitrary(InstanceMethod(classOf[Object].getDeclaredMethods().apply(0)))
 }
-trait ScalaMethods extends ObjectMethods with InstanceMethods {
+trait AnyScalaMethods extends ObjectMethods with InstanceMethods {
   implicit val anyScalaMethod: Arbitrary[ScalaMethod]= Arbitrary(Gen.oneOf(arbObjectMethods.arbitrary, arbInstanceMethods.arbitrary))
 }
