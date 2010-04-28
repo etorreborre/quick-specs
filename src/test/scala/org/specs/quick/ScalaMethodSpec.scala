@@ -4,33 +4,48 @@ import org.specs.util._
 import org.scalacheck._
 
 class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Sugar with DataTables {
-  "A ScalaMethod" can {
-    "be created from an object" in {
-      Methods.create(new Object).methods must have size(9)
+  val methodsForObject = Methods.create[Object]
+  "A ScalaMethods object grouping several ScalaMethods" can {
+    "be created from a scala object" in {
+      object AScalaObject
+      Methods.create(AScalaObject).methods must have size(9)
     }
-    "be created from a java method" in {
-      Methods.create(new Object).methods must have (_.methodName == "toString")
+    "be created from a type" in {
+      methodsForObject.methods must have (_.methodName == "toString")
     }
-    val m = Methods.create[Object].get("toString")
-    val m2 = Methods.create[Object].get("equals")
-    "have a type which is the return type of its java method" in {
-      m.getType must_== "java.lang.String"
+  }
+  "A ScalaMethod object" should {
+    val toStringMethod: ScalaMethod = methodsForObject.get("toString")
+    val equalsMethod: ScalaMethod = methodsForObject.get("equals")
+    "have a type which is the return type of its associated java method" in {
+      toStringMethod.getType must_== "java.lang.String"
     }
     "have parameters types which are the parameter types of its java method" in {
-      m2.getParameterTypes must_== List("java.lang.Object")
+      equalsMethod.getParameterTypes must_== List("java.lang.Object")
     }
     "have a toString method returning the method name" in {
-      m2.toString must_== "equals"
+      equalsMethod.toString must_== "equals"
     }
     "have an apply method applying a list of values to the method" in {
       case class Adder() {
         def addOne(o: String) = "hello " + o
+        def add1(i: Int) = "hello " + i
       }
-      val m3 = Methods.create[Adder].get("addOne")
-      m3.apply("world") must_== "hello world"
+      "if the ScalaMethods object has been created from a type, the values must provide an instance as the first value" >> {
+        val addOneMethod = Methods.create[Adder].get("addOne")
+        addOneMethod.apply(Adder(), "world") must_== "hello world"
+      }
+      "if the ScalaMethods object has been created from an instance, the values must provide only the parameters" >> {
+        val addOneMethod = Methods.create(new Adder).get("addOne")
+        addOneMethod.apply("world") must_== "hello world"
+      }
+      "the passed values can be AnyVal too" >> {
+        val add1Method = Methods.create(new Adder).get("add1")
+        add1Method.apply(1) must_== "hello 1"
+      }
     }
   }
-  "A Methods object" can {
+  "A ScalaMethods object" can {
     "be tagged so that only accepted methods are returned with the get method" in {
       val methods = Methods.create[Object].accept("toString")
       methods.get must have(_.methodName == "toString")

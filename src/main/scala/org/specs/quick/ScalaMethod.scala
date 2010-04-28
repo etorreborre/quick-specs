@@ -21,8 +21,7 @@ trait ScalaMethod extends Tagged {
   val method: Method
   val declaringClass: Class[_] = method.getDeclaringClass
   def getType: String = method.getReturnType.getName
-  def getParameterTypes: List[String] = method.getParameterTypes.toList.map(_.getName)
-
+  def getParameterTypes: List[String] = method.getParameterTypes.map(_.getName).toList
   def methodName = NameTransformer.decode(method.getName)
   override def toString = methodName
   def apply(values: Any*): Any = apply(values.toList)
@@ -53,7 +52,7 @@ case class ObjectMethod(instance: AnyRef, method: Method) extends ScalaMethod {
  */
 case class InstanceMethod(method: Method) extends ScalaMethod {
   def apply(values: List[Any]): Any = {
-    require(values.size > 1)
+    require (values.size >= 1)
     if (values.size == 1)
      method.invoke(values(0)) 
     else {
