@@ -52,6 +52,6 @@ object ScalaMethods extends Classes {
 /**
  * Transforms any object to a Methods object containing a list of ScalaMethods
  */
-trait MethodsFactory {
+trait ScalaMethodsFactory {
   implicit def toMethods(a: AnyRef) = ScalaMethods.create(a)
 }

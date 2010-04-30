@@ -3,7 +3,7 @@ import org.specs._
 import org.specs.util._
 import org.scalacheck._
 
-class ScalaMethodSpec extends SpecificationWithJUnit with MethodsFactory with Sugar with DataTables {
+class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory with Sugar with DataTables {
   val methodsForObject = ScalaMethods.create[Object]
   "A ScalaMethods object grouping several ScalaMethods" can {
     "be created from a scala object" in {
