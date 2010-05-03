@@ -5,8 +5,8 @@ import org.scalacheck._
 
 trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with ExpressionsClassifier with EquationsPruner { this: Specification =>
 
-  def quick(a: AnyRef, variable: Variable[_]): String = quick(ScalaMethods.create(a), variable)
-  def quick(methods: ScalaMethods, variable: Variable[_]): String = quick(methods, List(variable))
+  def quick(a: AnyRef, variables: Variable[_]*): String = quick(ScalaMethods.create(a), variables:_*)
+  def quick(methods: ScalaMethods, variables: Variable[_]*): String = quick(methods, variables.toList)
   def quick(methods: ScalaMethods, variables: List[Variable[_]]): String = {
     val combinations: EquivalenceClass = combine(methods.get, variables)
     val equivalenceClasses: List[EquivalenceClass] = classify(combinations)

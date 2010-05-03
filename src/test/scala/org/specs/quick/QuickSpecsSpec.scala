@@ -19,6 +19,9 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
     "return a list of equations for the most simple case" in {
       quick(Lists.accept("\\+\\+", "nil"), xs).split("\n") must have size(3)
     }
+    "return a list of equations for a case with 2 variables" in {
+      quick(Lists.accept("\\+\\+", "nil"), xs, ys).split("\n") must have size(7)
+    }
     "return a list of equations containing the method name" in {
       quick(Lists, xs) must include("++")
     }
