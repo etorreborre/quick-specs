@@ -5,7 +5,7 @@ case class ComposedExpression(main: MethodExpression, other: List[Expression]) e
   override def toString = main.toString + other.mkString("(", ", ", ")")
   def evaluate = {
     try {
-      main.applyValues(other.map(_.evaluate))
+      main.applyValues(other.map(_.value))
     } catch {
       case e => e
     }

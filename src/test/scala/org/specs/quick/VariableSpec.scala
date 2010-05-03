@@ -25,7 +25,7 @@ object ConstVariableSpec extends Specification("A constant variable") with Scala
 }
 object ArbitraryVariableSpec extends Specification("An arbitrary variable") with ScalaCheck with ArbitraryVariables {
   "An arbitrary variable should have random values" verifies {  v: Variable[Int] =>
-    (1 to 100).toList.map(i => v.value).exists(_ < 0) must beTrue
+    (1 to 100).toList.map(i => v.evaluate).exists(_ < 0) must beTrue
   }
 }
 trait GenerationParams {

@@ -1,22 +1,19 @@
 package org.specs.quick
 
-case class EquivalenceClass(expressions: List[Expression], result: Option[Any]) {
-  def this(expressions: List[Expression]) = this(expressions, None)
-  def equations = "Equivalence: " + result + " -> " +expressions.map(_.show).mkString(" == ")
-  def evaluate: scala.collection.mutable.Map[Any, List[Expression]] = {
-    expressions.foldLeft(new scala.collection.mutable.HashMap[Any, List[Expression]]) { (res, cur) =>
-      val evaluated = cur.evaluate
-      var expressionsWithSameResult = res.get(evaluated).getOrElse(List[Expression]())
-      res.put(evaluated, cur :: expressionsWithSameResult)
-      res
-    }
+case class EquivalenceClass(expressions: List[Expression], variables: List[Variable[_]], result: Option[Any]) {
+  def show = expressions.map(_.show).mkString(" == ")
+
+  def this(expressions: List[Expression], variables: List[Variable[_]]) = this(expressions, variables, None)
+  
+  def equations = "Equivalence: " + result.getOrElse("None") + " -> " + show
+  
+  def evaluate: scala.collection.Map[Any, List[Expression]] = {
+	variables.foreach(_.evaluate)
+	expressions.groupBy(_.value)
   }
-    
-  def partition(n: Int) = {
-    (1 to n).foldLeft(List[EquivalenceClass]()) { (res, cur) =>
-      evaluate.map { e =>
-        EquivalenceClass(e._2, Some(e._1)) 
-      }.toList ::: res
-    }
+   
+  private def partition: List[EquivalenceClass] =  evaluate.map { e =>  new EquivalenceClass(e._2, variables, Some(e._1)) }.toList
+  def partition(n: Int): List[EquivalenceClass] = { 
+    (1 to n).foldLeft(List(this)) { (res, cur) => res.flatMap(_.partition) }
   }
 }

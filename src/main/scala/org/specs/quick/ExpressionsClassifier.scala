@@ -1,7 +1,7 @@
 package org.specs.quick
 
 trait ExpressionsClassifier {
-  def classify(expressions: List[Expression]) = {
-    new EquivalenceClass(expressions).partition(4)
+  def classify(equivalenceClass: EquivalenceClass) = {
+    equivalenceClass.partition(4)
   }
 }

@@ -17,7 +17,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   val ys = Variable[List[Int]]("ys")
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {
-      quick(Lists.accept("\\+\\+", "nil"), xs) must_==("++")
+      quick(Lists.accept("\\+\\+", "nil"), xs).split("\n") must have size(3)
     }
     "return a list of equations containing the method name" in {
       quick(Lists, xs) must include("++")
@@ -29,11 +29,11 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
   }
   "the combine method" should {
     "combine an expression taking a 2 variables and 1 variable in 2 expressions: a, exp(a, a)" in {
-      combine(List(plusPlus), List(xs)).toString must_== "List(++(xs, xs), xs)"
+      combine(List(plusPlus), List(xs)).expressions.toString must_== "List(++(xs, xs), xs)"
     }
     "combine an expression taking a 2 variables and 1 variables in 6 expressions: \n" + 
     "a, b, exp(a, b), exp(b, a), exp(a, a), exp(b, a)" in {
-      combine(List(plusPlus), List(xs, ys)) must have size(6)
+      combine(List(plusPlus), List(xs, ys)).expressions must have size(6)
     }
   }
   "applicable parameters for a given method" should {

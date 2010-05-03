@@ -5,4 +5,5 @@ trait Expression {
   def getType: String
   def apply(expressions: List[Expression]): List[Expression] = List(this)
   def evaluate: Any
+  def value: Any = evaluate
 }
