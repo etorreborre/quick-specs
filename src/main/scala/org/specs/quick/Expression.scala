@@ -7,3 +7,4 @@ trait Expression {
   def evaluate: Any
   def value: Any = evaluate
 }
+
