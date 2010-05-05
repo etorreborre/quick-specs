@@ -29,8 +29,8 @@ class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrie
       ComposedExpression(MethodExpression(m), constVariableExp :: Nil).curryfy must_== Apply(Curry("wait"), Curry("const"))
     }
     "be an successive applications of one parameter when there are 2 parameters" in {
-      ComposedExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil).curryfy must_== 
-    	  Apply(Apply(Curry("wait"), Curry("const")), Curry("arb"))
+      ComposedExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil).curryfy.toString must_== 
+    	  ".(.(wait, const), arb)"
     }
   }
 }

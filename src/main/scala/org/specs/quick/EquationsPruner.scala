@@ -1,8 +1,9 @@
 package org.specs.quick
 
-trait EquationsPruner extends ExpressionCurrier {
+trait EquationsPruner extends ExpressionCurrier with EqualityFlattener {
   def prune(classes: List[EquivalenceClass]) = {
-	val curried: List[Curried] = curryfy(classes)
+	val curried: List[Equality] = curryfy(classes)
+	val flattened: List[Equality] = flatten(curried)
 	classes
   }
 }

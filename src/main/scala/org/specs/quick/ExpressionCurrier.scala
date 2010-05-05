@@ -1,6 +1,6 @@
 package org.specs.quick
 
-trait ExpressionCurrier {
+trait ExpressionCurrier extends CurriedExpressions {
   implicit def toCurry(e: Expression) = new ToCurry(e)
   class ToCurry(e: Expression) {
 	def curryfy: Curried = {
@@ -15,13 +15,26 @@ trait ExpressionCurrier {
 	  }
 	}
   }
-  trait Curried
-  case class Apply(c: Any, a: Curried) extends Curried
-  case class Curry(a: Any) extends Curried
-  def curryfy(classes: List[EquivalenceClass]) = {
-	classes.foldLeft(List[Curried]()) { (res, cur) => 
-	  cur.expressions.map(_.curryfy) ::: res
+  def curryfy(classes: List[EquivalenceClass]): List[Equality] = {
+	classes.foldLeft(List[Equality]()) { (res, cur) => 
+	  cur.equalities.map(_.curryfy) ::: res
 	}
   }
-
+}
+trait CurriedExpressions {
+  trait Curried
+  case class Apply(c: Any, a: Curried) extends Curried {
+	override def toString = List(c, a).mkString(".(", ", ", ")") 
+  }
+  case class Curry(a: Any) extends Curried {
+	override def toString = a.toString 
+  }
+  case class CurriedEquality(a: Curried, b: Curried) extends Equality {
+	def curryfy = this
+  }
+  // use StandardTokenParsers
+//  def fromString(s: String): Curried = s.toList match {
+//	case List('.', '(', a,  ',', ' ', ',', b, ')') => Apply(fromString(a.toString), fromString(b.toString))
+//	case other => Curry(other)
+//  }
 }
