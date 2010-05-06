@@ -4,6 +4,7 @@ import org.specs.SpecificationWithJUnit
 import org.scalacheck.Gen
 
 class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrier {
+  import CurriedParser._
   implicit val params = Gen.defaultParams
   val arbVariable = Variable[Int]("arb")
   val constVariable = Constant("const")(1)
@@ -25,12 +26,16 @@ class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrie
     "be curried with just its name when it has no parameter" in {
       ComposedExpression(MethodExpression(m), Nil).curryfy must_== Curry("wait")
     }
-    "be an application when there is one parameter" in {
+    "be curried as an application when there is one parameter" in {
       ComposedExpression(MethodExpression(m), constVariableExp :: Nil).curryfy must_== Apply(Curry("wait"), Curry("const"))
     }
-    "be an successive applications of one parameter when there are 2 parameters" in {
-      ComposedExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil).curryfy.toString must_== 
-    	  ".(.(wait, const), arb)"
+    "be curried with 2 successive applications of one parameter when there are 2 parameters" in {
+      ComposedExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil).curryfy must_==
+    	  fromString(".(.(wait, const), arb)")
+    }
+    "be curried with 3 successive applications of one parameter when there are 3 parameters" in {
+      ComposedExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: constVariableExp :: Nil).curryfy must_==
+    	  fromString(".(.(.(wait, const), arb), const)")
     }
   }
 }

@@ -21,6 +21,12 @@ trait ExpressionCurrier extends CurriedExpressions {
 	}
   }
 }
+import scala.util.parsing.combinator.syntactical.TokenParsers
+import scala.util.parsing.combinator._
+import scala.util.parsing.combinator.token._
+import scala.util.parsing.combinator.lexical.StdLexical
+import scala.util.parsing.input._
+
 trait CurriedExpressions {
   trait Curried
   case class Apply(c: Any, a: Curried) extends Curried {
@@ -32,9 +38,12 @@ trait CurriedExpressions {
   case class CurriedEquality(a: Curried, b: Curried) extends Equality {
 	def curryfy = this
   }
-  // use StandardTokenParsers
-//  def fromString(s: String): Curried = s.toList match {
-//	case List('.', '(', a,  ',', ' ', ',', b, ')') => Apply(fromString(a.toString), fromString(b.toString))
-//	case other => Curry(other)
-//  }
+  object CurriedParser extends JavaTokenParsers {
+    val application = (".(" ~> parser) ~ (", " ~> const <~ ")") ^^ { case a ~ b => 
+      Apply(a, b) 
+    }    
+    val const = ident ^^ { s => Curry(s) }
+    val parser: Parser[Curried] = application | const
+    implicit def fromString(s: String): Curried = parser.apply(new CharSequenceReader(s)).get
+  }
 }
