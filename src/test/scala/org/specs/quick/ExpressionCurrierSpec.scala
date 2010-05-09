@@ -39,3 +39,4 @@ class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrie
     }
   }
 }
+

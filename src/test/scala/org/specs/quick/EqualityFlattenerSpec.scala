@@ -4,8 +4,11 @@ import org.specs.SpecificationWithJUnit
 import org.scalacheck.Gen
 
 class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattener with CurriedExpressions {
+  import EqualityParser._
   "A curried equality" should {
     "be flattened as a list of equalities" in {
+      // .(.(a, b), c) = d => .(ab, c) = d; .(a, b) = ab 
+      flatten(fromString(".(.(a, b), c) = d")) //must_== List(fromString(".(ab, c) = d"), fromString(".(a, b) = ab"))    	
     }
   }
 }

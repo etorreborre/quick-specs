@@ -23,10 +23,12 @@ case class EquivalenceClass(expressions: List[Expression], variables: List[Varia
     (1 to n).foldLeft(List(this)) { (res, cur) => res.flatMap(_.partition) }
   }
 }
-trait Equality {
-  def curryfy: Equality
+trait Curryfiable {
+  def curryfy: this.type
 }
-case class ExpressionEquality(a: Expression, b: Expression) extends ExpressionCurrier with Equality {
+case class ExpressionEquality(a: Expression, b: Expression) extends Equality[Expression](a, b) {
   def this(a: Expression) = this(a, a)
-  def curryfy: Equality = CurriedEquality(a.curryfy, b.curryfy)
+}
+class Equality[T](a: T, b: T) {
+  def this(a: T) = this(a, a)
 }

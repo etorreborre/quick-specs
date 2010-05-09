@@ -15,19 +15,14 @@ trait ExpressionCurrier extends CurriedExpressions {
 	  }
 	}
   }
-  def curryfy(classes: List[EquivalenceClass]): List[Equality] = {
-	classes.foldLeft(List[Equality]()) { (res, cur) => 
-	  cur.equalities.map(_.curryfy) ::: res
+  def curryfy(classes: List[EquivalenceClass]): List[Equality[Curried]] = {
+	classes.foldLeft(List[Equality[Curried]]()) { (res, cur) => 
+	  cur.equalities.map(e => new Equality(e.a.curryfy, e.b.curryfy)) ::: res
 	}
   }
 }
-import scala.util.parsing.combinator.syntactical.TokenParsers
 import scala.util.parsing.combinator._
-import scala.util.parsing.combinator.token._
-import scala.util.parsing.combinator.lexical.StdLexical
 import scala.util.parsing.input._
-
-trait CurriedExpressions {
   trait Curried
   case class Apply(c: Any, a: Curried) extends Curried {
 	override def toString = List(c, a).mkString(".(", ", ", ")") 
@@ -35,7 +30,9 @@ trait CurriedExpressions {
   case class Curry(a: Any) extends Curried {
 	override def toString = a.toString 
   }
-  case class CurriedEquality(a: Curried, b: Curried) extends Equality {
+
+trait CurriedExpressions {
+  case class CurriedEquality(a: Curried, b: Curried) extends Equality(a, b) {
 	def curryfy = this
   }
   object CurriedParser extends JavaTokenParsers {
