@@ -24,8 +24,8 @@ trait ExpressionCurrier extends CurriedExpressions {
 import scala.util.parsing.combinator._
 import scala.util.parsing.input._
   trait Curried
-  case class Apply(c: Any, a: Curried) extends Curried {
-	override def toString = List(c, a).mkString(".(", ", ", ")") 
+  case class Apply(a: Any, b: Curried) extends Curried {
+	override def toString = List(a, b).mkString(".(", ", ", ")") 
   }
   case class Curry(a: Any) extends Curried {
 	override def toString = a.toString 
@@ -36,11 +36,12 @@ trait CurriedExpressions {
 	def curryfy = this
   }
   object CurriedParser extends JavaTokenParsers {
-    val application = (".(" ~> parser) ~ (", " ~> const <~ ")") ^^ { case a ~ b => 
+    val application = (".(" ~> parser) ~ ("," ~> const <~ ")") ^^ { case a ~ b => 
       Apply(a, b) 
     }    
     val const = ident ^^ { s => Curry(s) }
     val parser: Parser[Curried] = application | const
+    val curried = parser
     implicit def fromString(s: String): Curried = parser.apply(new CharSequenceReader(s)).get
   }
 }

@@ -31,4 +31,5 @@ case class ExpressionEquality(a: Expression, b: Expression) extends Equality[Exp
 }
 class Equality[T](a: T, b: T) {
   def this(a: T) = this(a, a)
+  override def toString = "[" + a.toString + " == " + b.toString + "]" 
 }
