@@ -7,15 +7,18 @@ trait EqualityFlattener { this: CurriedExpressions =>
 	  flattenCurried(cur) ::: res
 	}
   }
-  private def flattenCurried(curried: Equality[_]): List[Equality[_]] = curried match {
-	case CurriedEquality(Curry(a), Curry(b)) => 
-	   List(CurriedEquality(Curry(a), Curry(b)))
-	case CurriedEquality(Apply(Apply(a, b), c), d) => {
-	  val ab = a.toString + b.toString
-	  CurriedEquality(Apply(ab, c), d) :: flattenCurried(CurriedEquality(Apply(a, b), Curry(ab)))
-	}
-	case CurriedEquality(Apply(a, Curry(b)), c) => 
-	   List(CurriedEquality(Apply(a, Curry(b)), c))
+  private def flattenCurried(curried: Equality[_]): List[Equality[_]] = {
+	curried match {
+	  case CurriedEquality(Curry(a), Curry(b)) => 
+	    List(CurriedEquality(Curry(a), Curry(b)))
+	  case CurriedEquality(Apply(Apply(a, b), c), d) => {
+	    val ab = a.toString + b.toString
+	    CurriedEquality(Apply(ab, c), d) :: flattenCurried(CurriedEquality(Apply(a, b), Curry(ab)))
+	  }
+	  case CurriedEquality(Apply(a, Curry(b)), c) => List(CurriedEquality(Apply(a, Curry(b)), c))
+	  case CurriedEquality(a, b) if (a == b) => Nil
+	  case CurriedEquality(a, b) if (a != b) => flattenCurried(CurriedEquality(b, a))
+    }
   }
   
   import scala.util.parsing.combinator._

@@ -10,8 +10,9 @@ case class EquivalenceClass(expressions: List[Expression], variables: List[Varia
   private def makeEqualities(exp: List[Expression]): List[ExpressionEquality] = exp match {
 	case Nil => Nil
 	case e :: Nil => List(new ExpressionEquality(e))
-	case e :: other :: Nil => List(ExpressionEquality(e, other))
-	case e :: other :: others => ExpressionEquality(e, other) :: makeEqualities(others)
+	case e :: other :: Nil if (e != other) => List(ExpressionEquality(e, other))
+	case e :: other :: others if (e != other) => ExpressionEquality(e, other) :: makeEqualities(others)
+	case _ => Nil
   }
   def evaluate: scala.collection.Map[Any, List[Expression]] = {
 	variables.foreach(_.evaluate)

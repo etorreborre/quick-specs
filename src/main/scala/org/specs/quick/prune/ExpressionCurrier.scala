@@ -17,7 +17,7 @@ trait ExpressionCurrier extends CurriedExpressions {
   }
   def curryfy(classes: List[EquivalenceClass]): List[Equality[Curried]] = {
 	classes.foldLeft(List[Equality[Curried]]()) { (res, cur) => 
-	  cur.equalities.map(e => new Equality(e.a.curryfy, e.b.curryfy)) ::: res
+	  cur.equalities.map(e => new CurriedEquality(e.a.curryfy, e.b.curryfy)) ::: res
 	}
   }
 }

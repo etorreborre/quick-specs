@@ -1,7 +1,8 @@
 package org.specs.quick
 
 trait ExpressionsCombiner extends Expressions {
-  def combine(methods: List[ScalaMethod], variables: List[Variable[_]]): EquivalenceClass = {
+  val combine = (combineMethods _).tupled
+  private def combineMethods(methods: List[ScalaMethod], variables: List[Variable[_]]): EquivalenceClass = {
     combineExpressions(makeExpressions(methods, variables), variables)
   }
   def makeExpressions(methods: List[ScalaMethod], variables: List[Variable[_]]) = {
