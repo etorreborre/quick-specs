@@ -9,17 +9,17 @@ import org.scalacheck._
  *
  * The output of the quick method is a list of equations, one equation per line
  */
-trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with ExpressionsClassifier with EquationsPruner { this: org.specs.Specification =>
+trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with ExpressionsClassifier with EquationsPruner with Functions { this: org.specs.Specification =>
 
   def quick(methods: ScalaMethods, variables: Variable[_]*): String = quick(methods, variables.toList)
   
   /**
    * 1. combine methods and variables to from expressions
    * 2. test them with ScalaCheck to sort them into equivalence classes
-   * 3. prune redondant equations
+   * 3. prune redundant equations
    */
   private def quick(methods: ScalaMethods, variables: List[Variable[_]]): String = {
-    (combine andThen classify andThen prune)(methods.get, variables) mkString "\n"
+    (methods, variables) |> combine |> classify |> prune |>  (_ mkString "\n")
   } 
 }
 
