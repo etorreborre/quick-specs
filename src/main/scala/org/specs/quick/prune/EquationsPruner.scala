@@ -1,4 +1,5 @@
-package org.specs.quick
+package org.specs.quick.prune
+import org.specs.quick.classify._
 
 trait EquationsPruner extends ExpressionCurrier with EqualityFlattener {
   val prune = pruneEquations _

@@ -2,18 +2,22 @@ package org.specs.quick
 import org.specs._
 import org.scalacheck._
 import org.scalacheck.util._
+import org.specs.quick.methods._
+import org.specs.quick.expression._
 
 object Lists {
   def ++[T](l: List[T], l2: List[T]) = l ::: l2
   def nil[T]: List[T] = Nil
   override def toString = "Lists (" + hashCode + ")" 
 }
-class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
+trait SampleLists extends ScalaMethodsFactory {
   val plusPlus: ScalaMethod = Lists.find("++").get
   implicit val params = Gen.Params(2,StdRand)
   implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))
   val xs = Variable[List[Int]]("xs")
   val ys = Variable[List[Int]]("ys")
+}
+class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar with SampleLists {
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {
       quick(Lists.accept("\\+\\+", "nil"), xs).split("\n") must have size(3)

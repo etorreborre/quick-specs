@@ -1,4 +1,7 @@
-package org.specs.quick
+package org.specs.quick.prune
+
+import org.specs.quick.methods._
+import org.specs.quick.expression._
 
 import org.specs.SpecificationWithJUnit
 import org.scalacheck.Gen

@@ -1,5 +1,6 @@
 package org.specs.quick.expression
 import org.specs.quick.methods._
+import org.specs.quick.classify._
 
 trait ExpressionsCombiner extends Expressions {
   val combine = (combineMethods _).tupled

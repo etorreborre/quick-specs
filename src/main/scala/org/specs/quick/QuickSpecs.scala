@@ -1,7 +1,8 @@
 package org.specs.quick
-import org.specs.quick.expression
-import org.specs.quick.methods
-import org.specs.ScalaCheck
+import org.specs.quick.methods._
+import org.specs.quick.expression._
+import org.specs.quick.classify._
+import org.specs.quick.prune._
 import org.specs._
 import org.scalacheck._
 

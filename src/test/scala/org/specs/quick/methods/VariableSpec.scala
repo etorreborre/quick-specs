@@ -1,4 +1,4 @@
-package org.specs.quick
+package org.specs.quick.methods
 import org.specs._
 import org.scalacheck._
 
