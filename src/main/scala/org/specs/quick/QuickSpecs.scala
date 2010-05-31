@@ -1,4 +1,6 @@
 package org.specs.quick
+import org.specs.quick.expression
+import org.specs.quick.methods
 import org.specs.ScalaCheck
 import org.specs._
 import org.scalacheck._

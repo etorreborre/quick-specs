@@ -1,4 +1,5 @@
-package org.specs.quick
+package org.specs.quick.expression
+import org.specs.quick.methods._
 
 case class VariableExpression[A](variable: Variable[A]) extends Expression {
   def getType = variable.getType

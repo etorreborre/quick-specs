@@ -1,4 +1,4 @@
-package org.specs.quick
+package org.specs.quick.methods
 import org.scalacheck._
 import scala.reflect.ClassManifest
 

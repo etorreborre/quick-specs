@@ -1,4 +1,6 @@
-package org.specs.quick
+package org.specs.quick.classify
+import org.specs.quick.expression._
+import org.specs.quick.methods._
 
 case class EquivalenceClass(expressions: List[Expression], variables: List[Variable[_]], result: Option[Any]) {
   def show = expressions.map(_.show).mkString(" == ")

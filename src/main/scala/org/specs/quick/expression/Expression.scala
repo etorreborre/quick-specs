@@ -1,4 +1,4 @@
-package org.specs.quick
+package org.specs.quick.expression
 
 trait Expression {
   def show: String = toString

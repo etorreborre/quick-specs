@@ -1,4 +1,5 @@
-package org.specs.quick
+package org.specs.quick.prune
+import org.specs.quick.expression
 
 trait EqualityFlattener { this: CurriedExpressions =>
   def flatten(curried: Equality[_]*): List[Equality[_]] = flatten(curried.toList)

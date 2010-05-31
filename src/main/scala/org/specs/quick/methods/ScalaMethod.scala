@@ -1,4 +1,4 @@
-package org.specs.quick
+package org.specs.quick.methods
 import java.lang.reflect.Method
 import org.specs.specification.Tagged
 import org.specs.Sugar

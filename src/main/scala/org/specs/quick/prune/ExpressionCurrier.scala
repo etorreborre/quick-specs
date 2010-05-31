@@ -1,4 +1,5 @@
-package org.specs.quick
+package org.specs.quick.prune
+import org.specs.quick.expression
 
 trait ExpressionCurrier extends CurriedExpressions {
   implicit def toCurry(e: Expression) = new ToCurry(e)

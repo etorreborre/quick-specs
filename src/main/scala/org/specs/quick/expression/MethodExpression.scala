@@ -1,4 +1,5 @@
-package org.specs.quick
+package org.specs.quick.expression
+import org.specs.quick.methods._
 
 case class MethodExpression(m: ScalaMethod) extends Expression {
   override def toString = m.methodName

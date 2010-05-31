@@ -3,13 +3,12 @@ import org.specs._
 import org.scalacheck._
 import org.scalacheck.util._
 
-object QuickSpecsTest extends QuickSpecsSpec
+object Lists {
+  def ++[T](l: List[T], l2: List[T]) = l ::: l2
+  def nil[T]: List[T] = Nil
+  override def toString = "Lists (" + hashCode + ")" 
+}
 class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar {
-  object Lists {
-    def ++[T](l: List[T], l2: List[T]) = l ::: l2
-    def nil[T]: List[T] = Nil
-    override def toString = "Lists (" + hashCode + ")" 
-  }
   val plusPlus: ScalaMethod = Lists.find("++").get
   implicit val params = Gen.Params(2,StdRand)
   implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))

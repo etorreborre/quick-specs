@@ -1,4 +1,4 @@
-package org.specs.quick
+package org.specs.quick.expression
 
 case class ComposedExpression(main: MethodExpression, other: List[Expression]) extends Expression {
   def getType = main.getType
