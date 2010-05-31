@@ -9,6 +9,8 @@ import org.scalacheck._
 /**
  * This trait allows the creation of equations satisfied by some methods of a Scala object,
  * according to a list of variables.
+ * 
+ * The ScalaMethods parameter contains a list of methods that need to be combined to generate the equations
  *
  * The output of the quick method is a list of equations, one equation per line
  */

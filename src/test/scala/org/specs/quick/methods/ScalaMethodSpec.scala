@@ -18,10 +18,10 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
     val toStringMethod: ScalaMethod = methodsForObject.get("toString")
     val equalsMethod: ScalaMethod = methodsForObject.get("equals")
     "have a type which is the return type of its associated java method" in {
-      toStringMethod.getType must_== "java.lang.String"
+      toStringMethod.returnType must_== "java.lang.String"
     }
     "have parameters types which are the parameter types of its java method" in {
-      equalsMethod.getParameterTypes must_== List("java.lang.Object")
+      equalsMethod.parameterTypes must_== List("java.lang.Object")
     }
     "have a toString method returning the method name" in {
       equalsMethod.toString must_== "equals"
@@ -48,8 +48,8 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
   "A ScalaMethods object" can {
     "be tagged so that only accepted methods are returned with the get method" in {
       val methods = ScalaMethods.create[Object].accept("toString")
-      methods.get must have(_.methodName == "toString")
-      methods.get must notHave(_.methodName == "equals")
+      methods.methods must have(_.methodName == "toString")
+      methods.methods must notHave(_.methodName == "equals")
     }
     "return only the object own methods and not the inherited ones with the getOwn method" in {
       ScalaMethods.create(new { def add = () }).getOwn.apply(0).methodName must_== "add"
@@ -66,12 +66,12 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
     }
   }
 }
-trait ObjectMethods extends GenerationParams { 
-  implicit val arbObjectMethods: Arbitrary[ObjectMethod]= Arbitrary(ObjectMethod(new Object, classOf[Object].getDeclaredMethods().apply(0)))
+trait InstanceMethods extends GenerationParams { 
+  implicit val arbInstanceMethods: Arbitrary[InstanceMethod]= Arbitrary(InstanceMethod(new Object, classOf[Object].getDeclaredMethods().apply(0)))
 }
-trait InstanceMethods extends GenerationParams {
-  implicit val arbInstanceMethods: Arbitrary[InstanceMethod]= Arbitrary(InstanceMethod(classOf[Object].getDeclaredMethods().apply(0)))
+trait ClassMethods extends GenerationParams {
+  implicit val arbClassMethods: Arbitrary[ClassMethod]= Arbitrary(ClassMethod(classOf[Object].getDeclaredMethods().apply(0)))
 }
-trait AnyScalaMethods extends ObjectMethods with InstanceMethods {
-  implicit val anyScalaMethod: Arbitrary[ScalaMethod]= Arbitrary(Gen.oneOf(arbObjectMethods.arbitrary, arbInstanceMethods.arbitrary))
+trait AnyScalaMethods extends InstanceMethods with ClassMethods {
+  implicit val anyScalaMethod: Arbitrary[ScalaMethod]= Arbitrary(Gen.oneOf(arbInstanceMethods.arbitrary, arbClassMethods.arbitrary))
 }

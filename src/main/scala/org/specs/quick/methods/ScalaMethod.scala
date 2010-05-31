@@ -18,22 +18,23 @@ import reflect.{NameTransformer, ClassManifest}
  */
 trait ScalaMethod extends Tagged {
   val method: Method
-  val declaringClass: Class[_] = method.getDeclaringClass
-  def getType: String = method.getReturnType.getName
-  def getParameterTypes: List[String] = method.getParameterTypes.map(_.getName).toList
-  def methodName = NameTransformer.decode(method.getName)
-  override def toString = methodName
+  lazy val declaringClass: Class[_] = method.getDeclaringClass
+  lazy val returnType: String = method.getReturnType.getName
+  lazy val parameterTypes: List[String] = method.getParameterTypes.map(_.getName).toList
+  lazy val methodName = NameTransformer.decode(method.getName)
+
   def apply(values: Any*): Any = apply(values.toList)
   def apply(values: List[Any]): Any
+  override def toString = methodName
+
   tag(methodName)
 }
 
 /**
- * This class is a ScalaMethod for the method of a Scala object. 
+ * This class stores a Method and the instance on which this Method should be applied. 
  *
- * It stores the object that should be used to invoke the method.
  */
-case class ObjectMethod(instance: AnyRef, method: Method) extends ScalaMethod {
+case class InstanceMethod(instance: AnyRef, method: Method) extends ScalaMethod {
   def apply(values: List[Any]): Any = {
     if (values.isEmpty)
      method.invoke(instance) 
@@ -49,7 +50,7 @@ case class ObjectMethod(instance: AnyRef, method: Method) extends ScalaMethod {
  * The prerequisite of the apply method is that the first value of the list of values
  * is an instance of the class that can be used to invoke the method
  */
-case class InstanceMethod(method: Method) extends ScalaMethod {
+case class ClassMethod(method: Method) extends ScalaMethod {
   def apply(values: List[Any]): Any = {
     require (values.size >= 1)
     if (values.size == 1)

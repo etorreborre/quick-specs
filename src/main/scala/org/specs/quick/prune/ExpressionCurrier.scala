@@ -3,15 +3,15 @@ import org.specs.quick.expression._
 import org.specs.quick.classify._
 
 trait ExpressionCurrier extends CurriedExpressions {
-  implicit def toCurry(e: Expression) = new ToCurry(e)
-  class ToCurry(e: Expression) {
+  implicit def toCurry[T <: Expression](e: T): ToCurry[T] = new ToCurry(e)
+  case class ToCurry[T <: Expression](e: T) {
 	def curryfy: Curried = {
 	  e match {
 		case v: VariableExpression[_] => Curry(v.variable.show)
 		case m: MethodExpression => Curry(m.show)
-		case ComposedExpression(m, Nil) => m.curryfy
-		case ComposedExpression(m, o :: Nil) => Apply(m.curryfy, o.curryfy)
-		case ComposedExpression(m, o :: others) => others.foldLeft(Apply(m.curryfy, o.curryfy)) { (res, cur) =>
+		case ApplicationExpression(method, Nil) => method.curryfy
+		case ApplicationExpression(method, o :: Nil) => Apply(method.curryfy, o.curryfy)
+		case ApplicationExpression(method, o :: others) => others.foldLeft(Apply(method.curryfy, o.curryfy)) { (res, cur) =>
 		  Apply(res, cur.curryfy)
 		}
 	  }
