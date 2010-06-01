@@ -15,15 +15,27 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
       combine(plusPlus, List(xs, ys)).expressions must have size(6)
     }
   }
-  val exp1 = new ValuedExpression { 
-    def getType = "scala.collection.immutable.List"
-    override def toString = getType
-    def value = Nil
+  case class ValuedExpressionReturning(t: String) extends ValuedExpression {
+    def getType = t
+    def value = ()
   }
+  val exp1 = new ValuedExpressionReturning("scala.collection.immutable.List")
   "applicable parameters for a given method" should {
     "extract the same parameter types" in {
-      MethodExpression(plusPlus).applicableParameters(List(exp1)) must_== List(List(exp1, exp1))
+      MethodExpression(plusPlus).applicableParameters(exp1) must_== List(List(exp1, exp1))
     }
+  }
+  "A variable can be applied to a method if" >> {
+	"the variable type is subtype of the method parameter type" >> {
+      val variable = ValuedExpressionReturning("java.io.BufferedInputStream")
+      class T { def method(s: java.io.InputStream) = () }
+      val method: ScalaMethod = (new T).accept("method").get("method")
+	  MethodExpression(method).applicableParameters(variable) must_== List(List(variable))
+		
+	}  
+	"the variable type is Unit and the method has no parameters" >> {
+		
+	}  
   }
   "applying expressions to a given expression" should {
     "return a list of expressions" in {

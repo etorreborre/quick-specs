@@ -15,7 +15,7 @@ package org.specs.quick.expression
  */
 trait Expression {
   def getType: String
-  def show: String = toString
+  def show: String = getType
   override def toString = show
 }
 /**
