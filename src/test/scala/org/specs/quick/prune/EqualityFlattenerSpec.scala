@@ -9,7 +9,7 @@ class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattene
     "be flattened as a list of equalities" in {
       noDetailedDiffs()
       // .(.(a, b), c) = d => .(ab, c) = d; .(a, b) = ab 
-      flatten(fromString(".(.(a, b), c) = d")).toString must_== List(fromString(".(ab, c) = d"), fromString(".(a, b) = ab")).toString    	
+      flattenEqualities(fromString(".(.(a, b), c) = d")).toString must_== List(fromString(".(ab, c) = d"), fromString(".(a, b) = ab")).toString    	
     }
   }
 }

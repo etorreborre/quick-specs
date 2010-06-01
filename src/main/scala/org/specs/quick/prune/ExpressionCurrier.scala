@@ -7,7 +7,9 @@ import org.specs.quick.classify._
  * This trait
  */
 private[prune] trait ExpressionCurrier {
-  def curryfy(equalities: List[Equality[Expression]]): List[Equality[Curried]] = {
+  val curryfy = curryfyEqualities _  
+  
+  private def curryfyEqualities(equalities: List[Equality[Expression]]): List[Equality[Curried]] = {
 	equalities map { case Equality(a, b) => Equality(a.curryfy, b.curryfy) }
   }
   implicit def curryfy[T <: Expression](e: T): Curryfier[T] = new Curryfier(e)
@@ -25,6 +27,7 @@ private[prune] trait ExpressionCurrier {
 	}
   }
 }
+private[prune] object ExpressionCurrier extends ExpressionCurrier
 
 import scala.util.parsing.combinator._
 import scala.util.parsing.input._

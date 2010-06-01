@@ -1,6 +1,6 @@
 package org.specs.quick.classify
 import org.specs.quick.expression._
-import org.specs.quick.methods._
+import org.specs.quick.equality._
 
 /**
  * This trait implements the classification strategy once the 
@@ -13,5 +13,7 @@ trait ExpressionsClassifier {
   implicit val partitionsNumber = 4
   val classify = classifyExpressions _
   
-  private def classifyExpressions(equivalenceClass: EquivalenceClass)(implicit number: Int) = equivalenceClass.partition(number)
+  private def classifyExpressions(combined: CombinedExpressions)(implicit number: Int): List[Equality[Expression]] = {
+	new EquivalenceClass(combined.expressions, combined.variables).partition(number).flatMap(_.equalities)
+  }
 }

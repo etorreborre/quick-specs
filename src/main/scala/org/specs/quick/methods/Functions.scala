@@ -7,3 +7,4 @@ trait Functions {
 	def |>[B](f: A => B) = f(a)
   }
 }
+object Functions extends Functions

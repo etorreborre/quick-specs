@@ -7,7 +7,7 @@ import org.specs.quick.methods._
  * An equivalence class is a list of Valued Expressions which give the same result for a given set 
  * of variables
  */
-case class EquivalenceClass(expressions: List[ValuedExpression], variables: List[Variable[_]], result: Option[Any]) {
+private[classify] case class EquivalenceClass(expressions: List[ValuedExpression], variables: List[Variable[_]], result: Option[Any]) {
 
   /** create an equivalence class with no result yet */
   def this(expressions: List[ValuedExpression], variables: List[Variable[_]]) = this(expressions, variables, None)

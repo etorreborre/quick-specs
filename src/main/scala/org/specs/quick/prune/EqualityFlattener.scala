@@ -3,8 +3,10 @@ import org.specs.quick.classify._
 import org.specs.quick.equality._
 
 private[prune] trait EqualityFlattener { 
-  def flatten(curried: Equality[_]*): List[Equality[_]] = flatten(curried.toList)
-  def flatten(curried: List[Equality[_]]): List[Equality[_]] = {
+  val flatten = flattenEqualitiesList _
+  
+  def flattenEqualities(curried: Equality[_]*): List[Equality[_]] = flattenEqualitiesList(curried.toList)
+  def flattenEqualitiesList(curried: List[Equality[_]]): List[Equality[_]] = {
 	curried.foldLeft(Nil:List[Equality[_]]) { (res: List[Equality[_]], cur: Equality[_]) =>
 	  flattenCurried(cur) ::: res
 	}
@@ -33,4 +35,6 @@ private[prune] trait EqualityFlattener {
     implicit def fromString(s: String): Equality[_] = parser.apply(new CharSequenceReader(s)).get
   }
 }
+private[prune] object EqualityFlattener extends EqualityFlattener 
+
 
