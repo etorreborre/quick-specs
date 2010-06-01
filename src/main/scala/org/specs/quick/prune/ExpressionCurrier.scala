@@ -4,7 +4,14 @@ import org.specs.quick.equality._
 import org.specs.quick.classify._
 
 /**
- * This trait
+ * This trait curries equality expressions so that
+ * every expression is an application of one parameter to a function:
+ * 
+ * .(wait, (const, arb, const))
+ * 
+ * is transformed to
+ * 
+ * .(.(.(wait, const), arb), const)
  */
 private[prune] trait ExpressionCurrier {
   val curryfy = curryfyEqualities _  
@@ -28,15 +35,3 @@ private[prune] trait ExpressionCurrier {
   }
 }
 private[prune] object ExpressionCurrier extends ExpressionCurrier
-
-import scala.util.parsing.combinator._
-import scala.util.parsing.input._
-object CurriedParser extends JavaTokenParsers {
-  val application = (".(" ~> parser) ~ ("," ~> const <~ ")") ^^ { case a ~ b => 
-    Apply(a, b) 
-  }    
-  val const = ident ^^ { s => Curry(s) }
-  val parser: Parser[Curried] = application | const
-  val curried = parser
-  implicit def fromString(s: String): Curried = parser.apply(new CharSequenceReader(s)).get
-}

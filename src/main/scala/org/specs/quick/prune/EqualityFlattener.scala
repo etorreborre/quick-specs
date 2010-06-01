@@ -2,6 +2,16 @@ package org.specs.quick.prune
 import org.specs.quick.classify._
 import org.specs.quick.equality._
 
+/**
+ * This trait "flattens" equalities by introducing new equalities so that, for example:
+ * 
+ * .(.(a, b), c) = d => 
+ * 
+ * .(ab, c) = d
+ * .(a, b) = ab 
+ * 
+ * where ab is a fresh expression
+ */
 private[prune] trait EqualityFlattener { 
   val flatten = flattenEqualitiesList _
   
@@ -23,16 +33,6 @@ private[prune] trait EqualityFlattener {
 	  case Equality(a, b) if (a == b) => Nil
 	  case Equality(a, b) if (a != b) => flattenCurried(Equality(b, a))
     }
-  }
-  
-  import scala.util.parsing.combinator._
-  import scala.util.parsing.input._
-  import CurriedParser.curried
-  object EqualityParser extends JavaTokenParsers {
-    val parser = curried ~ "=" ~ curried ^^ { case CurriedParser.~(CurriedParser.~(a,s), b) =>
-      Equality(a, b) 
-    }
-    implicit def fromString(s: String): Equality[_] = parser.apply(new CharSequenceReader(s)).get
   }
 }
 private[prune] object EqualityFlattener extends EqualityFlattener 
