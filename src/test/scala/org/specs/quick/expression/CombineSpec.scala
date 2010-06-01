@@ -31,10 +31,14 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
       class T { def method(s: java.io.InputStream) = () }
       val method: ScalaMethod = (new T).accept("method").get("method")
 	  MethodExpression(method).applicableParameters(variable) must_== List(List(variable))
-		
-	}  
-	"the variable type is Unit and the method has no parameters" >> {
-		
+	}
+  }
+  "A method with no parameters" >> {
+	"have no applicable parameters" >> {
+      val variable = ValuedExpressionReturning("any")
+      class T { def method() = () }
+      val method: ScalaMethod = (new T).accept("method").get("method")
+	  MethodExpression(method).applicableParameters(variable) must_== List(Nil)
 	}  
   }
   "applying expressions to a given expression" should {
