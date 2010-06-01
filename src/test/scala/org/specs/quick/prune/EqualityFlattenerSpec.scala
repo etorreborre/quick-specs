@@ -3,7 +3,7 @@ package org.specs.quick.prune
 import org.specs.SpecificationWithJUnit
 import org.scalacheck.Gen
 
-class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattener with CurriedExpressions {
+class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattener {
   import EqualityParser._
   "A curried equality" should {
     "be flattened as a list of equalities" in {

@@ -1,10 +1,17 @@
 package org.specs.quick.prune
 import org.specs.quick.expression._
+import org.specs.quick.equality._
 import org.specs.quick.classify._
 
-trait ExpressionCurrier extends CurriedExpressions {
-  implicit def toCurry[T <: Expression](e: T): ToCurry[T] = new ToCurry(e)
-  case class ToCurry[T <: Expression](e: T) {
+/**
+ * This trait
+ */
+private[prune] trait ExpressionCurrier {
+  def curryfy(equalities: List[Equality[Expression]]): List[Equality[Curried]] = {
+	equalities map { case Equality(a, b) => Equality(a.curryfy, b.curryfy) }
+  }
+  implicit def curryfy[T <: Expression](e: T): Curryfier[T] = new Curryfier(e)
+  case class Curryfier[T <: Expression](e: T) {
 	def curryfy: Curried = {
 	  e match {
 		case v: VariableExpression[_] => Curry(v.variable.show)
@@ -17,33 +24,16 @@ trait ExpressionCurrier extends CurriedExpressions {
 	  }
 	}
   }
-  def curryfy(classes: List[EquivalenceClass]): List[Equality[Curried]] = {
-	classes.foldLeft(List[Equality[Curried]]()) { (res, cur) => 
-	  cur.equalities.map(e => new CurriedEquality(e.a.curryfy, e.b.curryfy)) ::: res
-	}
-  }
 }
+
 import scala.util.parsing.combinator._
 import scala.util.parsing.input._
-  trait Curried
-  case class Apply(a: Any, b: Curried) extends Curried {
-	override def toString = List(a, b).mkString(".(", ", ", ")") 
-  }
-  case class Curry(a: Any) extends Curried {
-	override def toString = a.toString 
-  }
-
-trait CurriedExpressions {
-  case class CurriedEquality(a: Curried, b: Curried) extends Equality(a, b) {
-	def curryfy = this
-  }
-  object CurriedParser extends JavaTokenParsers {
-    val application = (".(" ~> parser) ~ ("," ~> const <~ ")") ^^ { case a ~ b => 
-      Apply(a, b) 
-    }    
-    val const = ident ^^ { s => Curry(s) }
-    val parser: Parser[Curried] = application | const
-    val curried = parser
-    implicit def fromString(s: String): Curried = parser.apply(new CharSequenceReader(s)).get
-  }
+object CurriedParser extends JavaTokenParsers {
+  val application = (".(" ~> parser) ~ ("," ~> const <~ ")") ^^ { case a ~ b => 
+    Apply(a, b) 
+  }    
+  val const = ident ^^ { s => Curry(s) }
+  val parser: Parser[Curried] = application | const
+  val curried = parser
+  implicit def fromString(s: String): Curried = parser.apply(new CharSequenceReader(s)).get
 }

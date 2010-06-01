@@ -1,5 +1,6 @@
 package org.specs.quick.classify
 import org.specs.quick.expression._
+import org.specs.quick.equality._
 import org.specs.quick.methods._
 
 /**
@@ -31,15 +32,12 @@ case class EquivalenceClass(expressions: List[ValuedExpression], variables: List
 	expressions.groupBy(_.value)
   }
 
-  def show = expressions.map(_.show).mkString(" == ")
-  def equations = "Equivalence: " + result.getOrElse("None") + " -> " + show
-  
-  def equalities: List[ExpressionEquality] = makeEqualities(expressions)
-  private def makeEqualities(exp: List[Expression]): List[ExpressionEquality] = exp match {
+  def equalities: List[Equality[Expression]] = makeEqualities(expressions)
+  private def makeEqualities(exp: List[Expression]): List[Equality[Expression]] = exp match {
 	case Nil => Nil
-	case e :: Nil => List(new ExpressionEquality(e))
-	case e :: other :: Nil if (e != other) => List(ExpressionEquality(e, other))
-	case e :: other :: others if (e != other) => ExpressionEquality(e, other) :: makeEqualities(others)
+	case e :: Nil => List(new Equality(e))
+	case e :: other :: Nil if (e != other) => List(Equality(e, other))
+	case e :: other :: others if (e != other) => Equality(e, other) :: makeEqualities(others)
 	case _ => Nil
   }
 }

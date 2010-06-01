@@ -1,7 +1,8 @@
 package org.specs.quick.prune
 import org.specs.quick.classify._
+import org.specs.quick.equality._
 
-trait EqualityFlattener { this: CurriedExpressions =>
+private[prune] trait EqualityFlattener { 
   def flatten(curried: Equality[_]*): List[Equality[_]] = flatten(curried.toList)
   def flatten(curried: List[Equality[_]]): List[Equality[_]] = {
 	curried.foldLeft(Nil:List[Equality[_]]) { (res: List[Equality[_]], cur: Equality[_]) =>
@@ -10,15 +11,15 @@ trait EqualityFlattener { this: CurriedExpressions =>
   }
   private def flattenCurried(curried: Equality[_]): List[Equality[_]] = {
 	curried match {
-	  case CurriedEquality(Curry(a), Curry(b)) => 
-	    List(CurriedEquality(Curry(a), Curry(b)))
-	  case CurriedEquality(Apply(Apply(a, b), c), d) => {
+	  case Equality(Curry(a), Curry(b)) => 
+	    List(Equality(Curry(a), Curry(b)))
+	  case Equality(Apply(Apply(a, b), c), d) => {
 	    val ab = a.toString + b.toString
-	    CurriedEquality(Apply(ab, c), d) :: flattenCurried(CurriedEquality(Apply(a, b), Curry(ab)))
+	    Equality(Apply(ab, c), d) :: flattenCurried(Equality(Apply(a, b), Curry(ab)))
 	  }
-	  case CurriedEquality(Apply(a, Curry(b)), c) => List(CurriedEquality(Apply(a, Curry(b)), c))
-	  case CurriedEquality(a, b) if (a == b) => Nil
-	  case CurriedEquality(a, b) if (a != b) => flattenCurried(CurriedEquality(b, a))
+	  case Equality(Apply(a, Curry(b)), c) => List(Equality(Apply(a, Curry(b)), c))
+	  case Equality(a, b) if (a == b) => Nil
+	  case Equality(a, b) if (a != b) => flattenCurried(Equality(b, a))
     }
   }
   
@@ -27,7 +28,7 @@ trait EqualityFlattener { this: CurriedExpressions =>
   import CurriedParser.curried
   object EqualityParser extends JavaTokenParsers {
     val parser = curried ~ "=" ~ curried ^^ { case CurriedParser.~(CurriedParser.~(a,s), b) =>
-      CurriedEquality(a, b) 
+      Equality(a, b) 
     }
     implicit def fromString(s: String): Equality[_] = parser.apply(new CharSequenceReader(s)).get
   }
