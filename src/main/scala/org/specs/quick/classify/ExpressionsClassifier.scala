@@ -10,7 +10,8 @@ import org.specs.quick.methods._
  * 4 times by evaluating its expressions and dividing the expressions by distinct results
  */
 trait ExpressionsClassifier {
+  implicit val partitionsNumber = 4
   val classify = classifyExpressions _
   
-  private def classifyExpressions(equivalenceClass: EquivalenceClass) = equivalenceClass.partition(4)
+  private def classifyExpressions(equivalenceClass: EquivalenceClass)(implicit number: Int) = equivalenceClass.partition(number)
 }
