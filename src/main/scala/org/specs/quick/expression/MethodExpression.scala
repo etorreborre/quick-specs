@@ -37,6 +37,15 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression {
    */
   private[expression] def typesMatch(t1: String, t2: String) = {
 	val loader = getClass.getClassLoader
-	loader.loadClass(t2).isAssignableFrom(loader.loadClass(t1))
+	def load(c: String, m: String): Option[Class[_]] = {
+  	  try {
+	    Some(loader.loadClass(c))
+	  } catch {
+	    case e: java.lang.ClassNotFoundException => None
+	  }
+	}
+	val c2 = load(t2, "couldn't find class " +  t2 + " to check if it is assignable from " + t1)
+	val c1 = load(t1, "couldn't find class " +  t1 + " to check if it can be assigned to " + t2)
+	c2.map(k2 => c1.map(k2.isAssignableFrom(_))).flatMap(c => c).getOrElse(false)
   }
 }

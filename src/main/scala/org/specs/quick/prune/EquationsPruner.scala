@@ -5,10 +5,10 @@ import EqualityFlattener._
 import ExpressionCurrier._
 import org.specs.quick.Functions._
 
-trait EquationsPruner {
+trait EquationsPruner extends org.specs.Sugar {
   val prune = pruneEquations _
   
   private def pruneEquations(equalities: List[Equality[Expression]]): List[Equality[_]] = {
-	equalities |> curryfy |> flatten
+	equalities.pp |> curryfy |> flatten
   }
 }
