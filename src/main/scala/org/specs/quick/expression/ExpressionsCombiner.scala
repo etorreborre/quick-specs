@@ -8,14 +8,16 @@ import org.specs.quick.classify._
 trait ExpressionsCombiner {
   val combine = (combineMethods _).tupled
   
-  private def combineMethods(methods: ScalaMethods, variables: List[Variable[_]]): CombinedExpressions = {
+  protected def combineMethods(methods: ScalaMethods, variables: List[Variable[_]]): CombinedExpressions = {
     combineMethodList(methods.methods, variables)
   }
-  private def combineMethodList(methods: List[ScalaMethod], variables: List[Variable[_]]): CombinedExpressions = {
+  protected def combineMethodList(methods: List[ScalaMethod], variables: List[Variable[_]]): CombinedExpressions = {
     combineExpressions(methods.map(MethodExpression(_)), variables.map(VariableExpression(_)), variables)
   }
   private def combineExpressions(methods: List[ApplicableExpression], parameters: List[ValuedExpression], variables: List[Variable[_]]): CombinedExpressions = {
-    CombinedExpressions((methods flatMap (_.apply(parameters))) ::: parameters, variables)
+	def applyParams(params: List[ValuedExpression]) = methods.flatMap(_.apply(params))
+	val combined = (methods.flatMap(_.apply(parameters)) /: (1 to 2)) { (res, cur) => res ::: applyParams(res)}
+    CombinedExpressions(combined ::: parameters, variables)
   }
 }
 case class CombinedExpressions(expressions: List[ValuedExpression], variables: List[Variable[_]])

@@ -10,6 +10,7 @@ object Lists {
 }
 trait SampleLists extends ScalaMethodsFactory {
   val plusPlus: ScalaMethod = Lists.find("++").get
+  val nil: ScalaMethod = Lists.find("nil").get
   implicit val params = Gen.Params(2,StdRand)
   implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))
   val xs = Variable[List[Int]]("xs")
