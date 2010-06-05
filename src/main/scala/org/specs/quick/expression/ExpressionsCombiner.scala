@@ -16,7 +16,8 @@ trait ExpressionsCombiner {
   }
   private def combineExpressions(methods: List[ApplicableExpression], parameters: List[ValuedExpression], variables: List[Variable[_]]): CombinedExpressions = {
 	def applyParams(params: List[ValuedExpression]) = methods.flatMap(_.apply(params))
-	val combined = (methods.flatMap(_.apply(parameters)) /: (1 until 2)) { (res, cur) => res ::: applyParams(res)}
+	val zeroParamsMethods = applyParams(Nil) 
+	val combined = (methods.flatMap(_.apply(zeroParamsMethods ::: parameters)) /: (1 until 2)) { (res, cur) => res ::: applyParams(res)}
     CombinedExpressions(combined.distinct ::: parameters, variables)
   }
 }
