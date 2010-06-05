@@ -12,9 +12,15 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
     }
     "combine 2 expressions and one variable" in {
       noDetailedDiffs()
-      val m = combineMethodList(List(plusPlus, nil), List(xs)).expressions.map(_.show)
-      m.toSet.toString must_== 
-    	  "Set(nil(), xs, ++(nil(), ++(xs, xs)), ++(++(xs, xs), ++(xs, xs)), ++(nil(), nil()), ++(++(xs, xs), nil()), ++(xs, xs))"
+      val methods = combineMethodList(List(plusPlus, nil), List(xs)).expressions.map(_.show).toSet
+      methods must_== 
+    	  Set("++(xs, xs)",
+    	  	  "nil()",
+    	  	  "++(++(xs, xs), ++(xs, xs))",
+    	  	  "++(++(xs, xs), nil())",
+    	  	  "++(nil(), ++(xs, xs))",
+    	   	  "++(nil(), nil())",
+    	  	  "xs")
     }
     "combine an expression taking a 2 variables and 1 variables in 6 expressions: \n" + 
     "a, b, exp(a, b), exp(b, a), exp(a, a), exp(b, a)" in {
