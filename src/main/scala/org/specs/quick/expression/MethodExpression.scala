@@ -26,23 +26,17 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression {
    * for each variable we keep a list of all the expressions that have the same type
    */
   private[expression] def applicableParameters(expressions: ValuedExpression*): List[List[ValuedExpression]] = {
-	println("trying out parameters " + expressions.mkString + " for method " + show)
 	val applicable: List[List[ValuedExpression]] = method.parameterTypes match {
 		case Nil => Nil
 		case parameterTypes => parameterTypes.map(t => expressions.toList.filter(e => typesMatch(e.getType, t)))
 	}
-	println("applicable are "+applicable + " for method " + show )
-	
-    val v = cartesianProduct(applicable)
-    println("cartesian product is " + v+ " for method " + show )
-    v
+    cartesianProduct(applicable)
   }
   private val loader = getClass.getClassLoader
   /**
    * @return true if t2 is assignable with t1
    */
   private[expression] def typesMatch(t1: String, t2: String) = {
-	println("trying " + t1 + " with " + t2)
 	def load(c: String, m: String): Option[Class[_]] = {
   	  try {
 	    Some(loader.loadClass(c))
