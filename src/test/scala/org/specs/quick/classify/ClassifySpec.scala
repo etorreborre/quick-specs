@@ -5,6 +5,8 @@ import org.specs._
 
 class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier with ExpressionsCombiner with SampleLists with Sugar {
   noDetailedDiffs()
+  override val partitionsNumber = 4
+  
   val combined = combine((plusPlusAndNil, List(xs)))
   "classifying expressions" should {
 	"evaluate expressions to separate them to equalities" in {

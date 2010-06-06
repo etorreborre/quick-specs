@@ -11,10 +11,10 @@ import org.specs.quick.equality._
  */
 trait ExpressionsClassifier {
   implicit val partitionsNumber = 4
-  val classify = classifyExpressions _
+  val classify = (c: CombinedExpressions) => classifyExpressions(c)(partitionsNumber) 
   
-  private def classifyExpressions(combined: CombinedExpressions)(implicit number: Int): List[Equality[Expression]] = {
-    val p = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
-    p.flatMap(_.equalities).sortBy(_.toString.size)
+  private def classifyExpressions(combined: CombinedExpressions)(number: Int = partitionsNumber): List[Equality[Expression]] = {
+	val partitions = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
+    partitions.flatMap(_.equalities).sortBy(_.toString.size)
   }
 }
