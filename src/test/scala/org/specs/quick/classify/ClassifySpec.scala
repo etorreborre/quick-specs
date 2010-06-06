@@ -8,11 +8,10 @@ class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier wit
   val combined = combine((plusPlusAndNil, List(xs)))
   "classifying expressions" should {
 	"evaluate expressions to separate them to equalities" in {
-		classify(combined).mkString("\n").pp
-	  classify(combined).map(_.toString).toSet must_== 
-	 	  Set("[++(xs, xs) == ++(++(xs, xs), nil())]", 
-	 		  "[xs == ++(xs, nil())]",
-	 		  "[nil() == ++(nil(), nil())]")
+	  classify(combined).map(_.toString).toSet must containAll( 
+	 	  Set("[xs == ++(nil(), xs)]",
+              "[nil() == ++(nil(), nil())]",
+              "[++(xs, xs) == ++(++(xs, xs), nil())]"))
 	}  
 	"return no equalities for tautologies" in {
 	  classify(combined).map(_.toString) must not contain("[xs == xs]") 

@@ -14,6 +14,7 @@ trait ExpressionsClassifier {
   val classify = classifyExpressions _
   
   private def classifyExpressions(combined: CombinedExpressions)(implicit number: Int): List[Equality[Expression]] = {
-	new EquivalenceClass(combined.expressions, combined.variables).partition(number).flatMap(_.equalities)
+    val p = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
+    p.flatMap(_.equalities).sortBy(_.toString.size)
   }
 }

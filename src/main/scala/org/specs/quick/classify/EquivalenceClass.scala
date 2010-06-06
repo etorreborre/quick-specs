@@ -33,7 +33,7 @@ private[classify] case class EquivalenceClass(expressions: List[ValuedExpression
   }
 
   def equalities: List[Equality[Expression]] = makeEqualities(expressions)
-  private def makeEqualities(exp: List[Expression]): List[Equality[Expression]] = exp match {
+  private def makeEqualities(exp: List[Expression]): List[Equality[Expression]] = exp.sortBy(_.toString.size) match {
 	case Nil => Nil
 	case e :: Nil => Nil
 	case e :: other :: Nil if (e != other) => List(Equality(e, other))
