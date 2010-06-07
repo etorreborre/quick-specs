@@ -1,8 +1,10 @@
 package org.specs.quick.prune
 
 import org.specs.SpecificationWithJUnit
+
 import org.scalacheck.Gen
 import EqualityParser._
+import org.specs.matcher._
 
 class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattener {
   "A curried equality" should {
