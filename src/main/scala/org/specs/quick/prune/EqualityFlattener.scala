@@ -13,14 +13,16 @@ import org.specs.quick.equality._
  * where ab is a fresh expression
  */
 private[prune] trait EqualityFlattener { 
-  val flatten = flattenEqualitiesList _
+  val flatten: Pair[List[Equality[_]], List[Equality[_]]] => (List[Equality[_]], List[Equality[_]]) = 
+	  { p => flattenEqualitiesList(p._1, p._2) }
   
-  def flattenEqualities(curried: Equality[_]*): List[Equality[_]] = flattenEqualitiesList(curried.toList)
-  def flattenEqualitiesList(curried: List[Equality[_]]): List[Equality[_]] = {
-	curried.foldLeft(Nil:List[Equality[_]]) { (res: List[Equality[_]], cur: Equality[_]) =>
+  def flattenEqualitiesList(original: List[Equality[_]], curried: List[Equality[_]]): (List[Equality[_]], List[Equality[_]]) = {
+	val flattened = curried.foldLeft(Nil:List[Equality[_]]) { (res: List[Equality[_]], cur: Equality[_]) =>
 	  flattenCurried(cur) ::: res
 	}
+	(original, flattened)
   }
+  def flattenEqualities(curried: Equality[_]*): List[Equality[_]] = flattenEqualitiesList(Nil, curried.toList)._2
   private def flattenCurried(curried: Equality[_]): List[Equality[_]] = {
 	curried match {
 	  case Equality(Curry(a), Curry(b)) => 

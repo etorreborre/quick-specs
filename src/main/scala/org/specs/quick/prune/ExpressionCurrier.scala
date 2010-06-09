@@ -14,10 +14,10 @@ import org.specs.quick.classify._
  * .(.(.(wait, const), arb), const)
  */
 private[prune] trait ExpressionCurrier {
-  val curryfy = curryfyEqualities _  
+  val curryfy: List[Equality[Expression]] => (List[Equality[_]], List[Equality[_]]) = curryfyEqualities _  
   
-  private def curryfyEqualities(equalities: List[Equality[Expression]]): List[Equality[Curried]] = {
-	equalities map { case Equality(a, b) => Equality(a.curryfy, b.curryfy) }
+  private def curryfyEqualities(equalities: List[Equality[Expression]]): (List[Equality[_]], List[Equality[_]]) = {
+	(equalities, equalities map { case Equality(a, b) => Equality(a.curryfy, b.curryfy) })
   }
   implicit def curryfy[T <: Expression](e: T): Curryfier[T] = new Curryfier(e)
   case class Curryfier[T <: Expression](e: T) {
