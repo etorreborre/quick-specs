@@ -17,7 +17,7 @@ private[prune] trait ExpressionCurrier {
   val curryfy: List[Equality[Expression]] => (List[Equality[_]], List[Equality[_]]) = curryfyEqualities _  
   
   private def curryfyEqualities(equalities: List[Equality[Expression]]): (List[Equality[_]], List[Equality[_]]) = {
-	(equalities, equalities map { case Equality(a, b) => Equality(a.curryfy, b.curryfy) })
+	(equalities, equalities map(e => e.map(_.curryfy)) )
   }
   implicit def curryfy[T <: Expression](e: T): Curryfier[T] = new Curryfier(e)
   case class Curryfier[T <: Expression](e: T) {

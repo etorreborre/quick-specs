@@ -23,7 +23,7 @@ private[prune] trait EqualityFlattener {
 	(original, flattened)
   }
   def flattenEqualities(curried: Equality[_]*): List[Equality[_]] = flattenEqualitiesList(Nil, curried.toList)._2
-  private def flattenCurried(curried: Equality[_]): List[Equality[_]] = {
+  def flattenCurried(curried: Equality[_]): List[Equality[_]] = {
 	curried match {
 	  case Equality(Curry(a), Curry(b)) => 
 	    List(Equality(Curry(a), Curry(b)))
