@@ -5,7 +5,6 @@ import scala.collection.mutable._
 trait CongruenceClosure {
   val congruence = { p: Pair[List[Equality[_]], List[Equality[_]]] => closure(p._1, p._2) }
   
-  
   private[prune] def closure(original: List[Equality[_]], equalities: List[Equality[_]]): List[Equality[_]] = {
     initialize(equalities)
     createClasses(equalities)

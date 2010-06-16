@@ -11,10 +11,12 @@ class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
   private val lookup = new HashMap[(Curried, Curried), Curried]
   private val pending = new Stack[(Curried, Curried)]
   
-  private def add(equality: Equality[Expression]) {
+  def add(equality: Equality[Expression]) {
 	initialize(equality)
 	recomputeCongruence()
   }
+  def isCongruent(a: Expression, b: Expression) = representative(a.curryfy) == representative(b.curryfy)
+  
   private def initialize(equality: Equality[Expression]) {
 	flattenCurried(equality.map(_.curryfy)) foreach  {
 	  case e @ Equality(Apply(a: Curried, b: Curried), c: Curried) => 
@@ -28,7 +30,6 @@ class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
 	      classList.put(v, v)
 	    }
 	}
-
   }
   private def recomputeCongruence() {
     while (!pending.isEmpty) { 

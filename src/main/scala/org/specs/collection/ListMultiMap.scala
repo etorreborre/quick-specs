@@ -8,5 +8,5 @@ class ListMultiMap[A, B] {
 	map(a).appendAll(b)
 	this
   }
-  def apply(a: A): scala.collection.immutable.List[B] = map(a).toList
+  def apply(a: A): scala.collection.immutable.List[B] = map.get(a).map(_.toList).flatten[B].toList
 }

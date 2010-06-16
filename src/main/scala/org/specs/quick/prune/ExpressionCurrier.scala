@@ -23,13 +23,12 @@ private[prune] trait ExpressionCurrier {
   case class Curryfier[T <: Expression](e: T) {
 	def curryfy: Curried = {
 	  e match {
-		case v: VariableExpression[_] => Curry(v.variable.show)
-		case m: MethodExpression => Curry(m.show)
 		case ApplicationExpression(method, Nil) => method.curryfy
 		case ApplicationExpression(method, o :: Nil) => Apply(method.curryfy, o.curryfy)
 		case ApplicationExpression(method, o :: others) => others.foldLeft(Apply(method.curryfy, o.curryfy)) { (res, cur) =>
 		  Apply(res, cur.curryfy)
 		}
+		case v: Expression => Curry(v.show)
 	  }
 	}
   }
