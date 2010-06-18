@@ -7,7 +7,9 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar w
   noDetailedDiffs()
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {
-      quick(Lists.accept("\\+\\+", "nil"), xs).split("\n") must have size(3)
+      val equations = quick(Lists.accept("\\+\\+", "nil"), xs).split("\n")
+      println(equations.mkString("\n"))
+      equations must have size(3)
     }
     "return a list of equations for a case with 2 variables" in {
       quick(Lists.accept("\\+\\+", "nil"), xs, ys).split("\n") must have size(7)

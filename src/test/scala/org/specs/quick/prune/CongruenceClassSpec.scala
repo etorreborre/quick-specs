@@ -38,6 +38,8 @@ trait ConstantExpressions {
   val b: ConstantExpression = "b"
   val c: ConstantExpression = "c"
   val d: ConstantExpression = "d"
+  val e: ConstantExpression = "e"
+  val f: ConstantExpression = "f"
   val nil: ConstantExpression = "nil"
   val xs: ConstantExpression = "xs"
   val ys: ConstantExpression = "ys"
