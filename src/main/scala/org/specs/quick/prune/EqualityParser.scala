@@ -14,5 +14,5 @@ private[prune] object EqualityParser extends JavaTokenParsers {
   val parser = curried ~ "=" ~ curried ^^ { case CurriedParser.~(CurriedParser.~(a,s), b) =>
     Equality(a, b) 
   }
-  implicit def fromString(s: String): Equality[_] = parser.apply(new CharSequenceReader(s)).get
+  implicit def fromString(s: String): Equality[Curried] = parser.apply(new CharSequenceReader(s)).get
 }

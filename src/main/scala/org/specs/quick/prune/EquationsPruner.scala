@@ -10,6 +10,14 @@ trait EquationsPruner extends org.specs.Sugar {
   val prune = pruneEquations _
   
   private def pruneEquations(equalities: List[Equality[Expression]]): List[Equality[_]] = {
-	equalities |> curryfy |> flatten |> congruence 
+	val congruence = new CongruenceClass
+	equalities.foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
+	   if (congruence.isCongruent(cur))
+	  	 res
+	   else {
+	  	congruence.add(cur)
+	  	cur :: res
+	   }
+	}
   }
 }

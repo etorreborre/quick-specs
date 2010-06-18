@@ -15,20 +15,33 @@ class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
 	initialize(equality)
 	recomputeCongruence()
   }
-  def isCongruent(a: Expression, b: Expression) = representative(a.curryfy) == representative(b.curryfy)
+  def isCongruent(equality: Equality[Expression]): Boolean = {
+	val Equality(a, b) = equality
+	isCongruent(a, b)
+  }
+  def isCongruent(a: Expression, b: Expression): Boolean = {
+	val Equality(u, v) = (flattenCurried(Equality(a.curryfy, b.curryfy)).collect { case e @ Equality(Curry(x), Curry(y)) => e }).apply(0)
+	(representative.get(u), representative.get(v)) match {
+	  case (Some(x), Some(y)) => x == y
+	  case other => false
+	}
+  }
   
   private def initialize(equality: Equality[Expression]) {
 	flattenCurried(equality.map(_.curryfy)) foreach  {
-	  case e @ Equality(Apply(a: Curried, b: Curried), c: Curried) => 
+		
+	  case e @ Equality(app @ Apply(a: Curried, b: Curried), c: Curried) => 
 	    useList.put(a, e)
 	    useList.put(b, e)
+	    register(a, b, c)
 	    lookup += (a, b) -> c
-	  case Equality(a: Curried, b: Curried) =>
+	  case e @ Equality(a: Curried, b: Curried) =>
 	    pending.push((a, b))
-	    List(a, b) foreach { v => 
-	      representative += v -> v
-	      classList.put(v, v)
-	    }
+	    register(a, b)
+	}
+	def register(elements: Curried*) = elements foreach { v => 
+	  representative += v -> v
+	  classList.put(v, v)
 	}
   }
   private def recomputeCongruence() {

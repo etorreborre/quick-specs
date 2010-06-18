@@ -2,9 +2,9 @@ package org.specs.quick.prune
 
 import org.specs.quick.methods._
 import org.specs.quick.expression._
+import org.scalacheck.Gen
 
 import org.specs.SpecificationWithJUnit
-import org.scalacheck.Gen
 
 class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrier {
   import CurriedParser._
@@ -36,9 +36,18 @@ class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrie
       ApplicationExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil).curryfy must_==
     	  fromString(".(.(wait, const), arb)")
     }
+    "be curried with 2 successive applications of one parameter when there are 2 parameters - show" in {
+      ApplicationExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil).curryfy.show must_==
+    	  "Apply(Apply(Curry(wait), Curry(const)), Curry(arb))"
+    }
     "be curried with 3 successive applications of one parameter when there are 3 parameters" in {
       ApplicationExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: constVariableExp :: Nil).curryfy must_==
     	  fromString(".(.(.(wait, const), arb), const)")
+    }
+    "be curried with 3 successive applications of one parameter when there are 2 applications" in {
+       val firstApplication = ApplicationExpression(MethodExpression(m), constVariableExp :: arbVariableExp :: Nil)
+    	ApplicationExpression(MethodExpression(m), firstApplication :: arbVariableExp :: Nil).curryfy must_==
+    	  fromString(".(.(wait, .(.(wait, const), arb)), arb)")
     }
   }
 }
