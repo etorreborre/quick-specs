@@ -37,5 +37,7 @@ trait ApplicableExpression extends Expression {
  */
 trait ValuedExpression extends Expression {
   def value: Any
+  def substitute(bindings: Map[Expression, ValuedExpression]): ValuedExpression
+  def variables: List[VariableExpression[_]]
 }
 

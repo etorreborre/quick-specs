@@ -32,12 +32,12 @@ private[classify] case class EquivalenceClass(expressions: List[ValuedExpression
 	expressions.groupBy(_.value)
   }
 
-  def equalities: List[Equality[Expression]] = makeEqualities(expressions)
-  private def makeEqualities(exp: List[Expression]): List[Equality[Expression]] = exp.sortBy(_.toString.size) match {
+  def equalities: List[Equality[ValuedExpression]] = makeEqualities(expressions)
+  private def makeEqualities(exp: List[ValuedExpression]): List[Equality[ValuedExpression]] = exp.sortBy(_.toString.size) match {
 	case Nil => Nil
 	case e :: Nil => Nil
 	case e :: other :: Nil if (e != other) => List(Equality(e, other))
-	case e :: other :: others if (e != other) => Equality(e, other) :: makeEqualities(others)
+	case e :: other :: others if (e != other) => Equality(e, other) :: makeEqualities(e :: others)
 	case _ => Nil
   }
 }

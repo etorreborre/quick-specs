@@ -9,4 +9,6 @@ class ListMultiMap[A, B] {
 	this
   }
   def apply(a: A): scala.collection.immutable.List[B] = map.get(a).map(_.toList).flatten[B].toList
+
+  override def toString = map.map { case (k, v) => (k, v.toList.mkString("[", ", ", "]")) }.toString
 }

@@ -8,30 +8,32 @@ import org.scalacheck.util._
 class CombineSpec extends Specification with ScalaMethodsFactory with ExpressionsCombiner with SampleLists {
   "the combine method" should {
     "combine an expression taking a 2 variables and 1 variable in 2 expressions: a, exp(a, a)" in {
-      combine(plusPlus, List(xs)).expressions.map(_.show).toString must_== "List(++(xs, xs), xs)"
+      combine(plusPlus, List(xs)).expressions.sortBy(_.toString.size).map(_.show).toString must_== 
+    	  "List(xs, ++(xs, xs), ++(++(xs, xs), ++(xs, xs)))"
     }
     "combine 2 expressions and one variable" in {
+      combineDepth(1)
       noDetailedDiffs()
       val methods = combineMethodList(List(plusPlus, nil), List(xs)).expressions.map(_.show)
-      methods.sortBy(_.length) must containAll(List(
+      methods.distinct.sortBy(_.length).mkString("\n") must include(List(
           "xs",
     	  "nil()",
     	  "++(xs, xs)",
-    	  "++(xs, nil())",
     	  "++(nil(), xs)",
-    	  "++(nil(), nil())",
-    	  "++(nil(), ++(xs, xs))",
-    	  "++(++(xs, xs), nil())",
-    	  "++(++(xs, xs), ++(xs, xs))"))
+    	  "++(xs, nil())",
+    	  "++(nil(), nil())").mkString("\n"))
     }
     "combine an expression taking a 2 variables and 1 variables in 6 expressions: \n" + 
     "a, b, exp(a, b), exp(b, a), exp(a, a), exp(b, a)" in {
+      combineDepth(1)
       combine(plusPlus, List(xs, ys)).expressions must have size(6)
     }
   }
   case class ValuedExpressionReturning(t: String) extends ValuedExpression {
     def getType = t
     def value = ()
+    def substitute(bindings: Map[Expression, ValuedExpression]) = this
+    def variables: List[VariableExpression[_]] = Nil
   }
   val exp1 = new ValuedExpressionReturning("scala.collection.immutable.List")
   "applicable parameters for a given method" should {

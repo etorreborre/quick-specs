@@ -55,7 +55,7 @@ class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
         }
         for (equality @ 
         	 Equality(Apply(c: Curried, d: Curried), e: Curried) <- useList(ra)) {
-          val (rc, rd, re) = (representative(c), representative(d), representative(e)) 
+          val (rc, rd, re) = (representative(c), representative(d), representative(e))
           lookup.get(rc, rd) map { f => 
             val rf = representative(f)
             if (rf != re) pending.push((re, rf))
@@ -65,5 +65,13 @@ class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
         }
       } 
     }	  
+  }
+  override def toString = {
+	List("useList " + useList,
+         "representative " + representative,
+         "classList " + classList,
+         "lookup " + lookup,
+         "pending " +pending).mkString("\n")
+
   }
 }

@@ -6,14 +6,15 @@ import org.specs._
 class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier with ExpressionsCombiner with SampleLists with Sugar {
   noDetailedDiffs()
   override val partitionsNumber = 4
+  combineDepth(1)
   
   val combined = combine((plusPlusAndNil, List(xs)))
   "classifying expressions" should {
 	"evaluate expressions to separate them to equalities" in {
-	  classify(combined).map(_.toString).toSet must containAll( 
-	 	  Set("[xs == ++(nil(), xs)]",
-              "[nil() == ++(nil(), nil())]",
-              "[++(xs, xs) == ++(++(xs, xs), nil())]"))
+	  classify(combined).map(_.toString).mkString("\n") must_== List( 
+	 	  "[xs == ++(nil(), xs)]",
+	 	  "[xs == ++(xs, nil())]",
+          "[nil() == ++(nil(), nil())]").mkString("\n")
 	}  
 	"return no equalities for tautologies" in {
 	  classify(combined).map(_.toString) must not contain("[xs == xs]") 

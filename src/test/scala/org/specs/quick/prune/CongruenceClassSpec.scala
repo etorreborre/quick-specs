@@ -10,7 +10,7 @@ class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for
 	"accept simple equalities and check congruence for 2 constants" in {
 1 must_== 1 
 	}
-	"accept equalities with an application and check congruence" in {
+	"accept equalities with an application and check congruence for a symetric equality" in {
 	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
 	  val eq2: Equality[Expression] = Equality(xs, apply("+", xs, nil))
 	  
@@ -28,6 +28,8 @@ trait ConstantExpressions {
     def value = name
     override def hashCode = name.hashCode
     override def equals(o: Any) = name.equals(o)
+    override def substitute(bindings: Map[Expression, ValuedExpression]) = this
+    def variables: List[VariableExpression[_]] = Nil
   }
     
   def apply(m: String, o: ValuedExpression*) = {

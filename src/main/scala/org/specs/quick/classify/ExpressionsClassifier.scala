@@ -13,8 +13,8 @@ trait ExpressionsClassifier {
   implicit val partitionsNumber = 4
   val classify = (c: CombinedExpressions) => classifyExpressions(c)(partitionsNumber) 
   
-  private def classifyExpressions(combined: CombinedExpressions)(number: Int = partitionsNumber): List[Equality[Expression]] = {
+  private def classifyExpressions(combined: CombinedExpressions)(number: Int = partitionsNumber): List[Equality[ValuedExpression]] = {
 	val partitions = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
-    partitions.flatMap(_.equalities).sortBy(_.toString.size)
+	partitions.flatMap(_.equalities).sortBy(_.toString.size)
   }
 }

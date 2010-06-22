@@ -9,4 +9,10 @@ case class VariableExpression[A](variable: Variable[A]) extends ValuedExpression
   def evaluate = variable.evaluate
   def value = variable.value
   override def show = variable.show
+  def substitute(bindings: Map[Expression, ValuedExpression]) = bindings.get(this) match {
+	case Some(a) => a
+	case None => this
+  }
+  def variables: List[VariableExpression[_]] = List(this)
+
 }

@@ -19,6 +19,6 @@ class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner wi
 	prune(List(Equality(apply("+", xs, nil), xs), Equality(xs, apply("+", xs, nil)))).mkString must_== "[+(xs, nil) == xs]" 
   }
   "pruning equations where there is a substitution" in {
-	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", nil, nil), nil))).mkString must_== "[+(xs, nil) == xs]" 
+	prune(List(Equality(apply("+", nil, nil), nil), Equality(apply("+", xs, nil), xs))).mkString must_== "[+(xs, nil) == xs]" 
   }
 }
