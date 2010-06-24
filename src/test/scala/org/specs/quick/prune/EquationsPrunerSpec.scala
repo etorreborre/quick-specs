@@ -28,13 +28,16 @@ class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner wi
 	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nil), ints))).mkString must_== 
 		"[+(xs, nil) == xs],[+(ints, nil) == ints]" 
   }
-  val expression = ValuedExpressionWithVariables(xs, i)
-  val terms = List(xs, ys, b)
   "the list of all bindings for an expression must be the cartesian product" +
   " of all possible values, using the types in a list of terms" in {
-	allBindings(expression, terms) must_== List(Bindings(expression))
+	println("list of all bindings")
+    val expression = ValuedExpressionWithVariables(xs)
+	val terms = List(xs, ys)
+    allBindings(expression, terms) must_== List(Bindings(expression, Map(xs -> xs)), Bindings(expression, Map(xs -> ys)))
   }
   "the possible values for an expression, using a list of terms is the list of a terms having the same type of each variable" in {
-	 possibleValues(expression, terms) must_== List(List(xs, ys), List())
+    val expression = ValuedExpressionWithVariables(xs, i)
+    val terms = List(xs, ys, b)
+	possibleValues(expression, terms) must_== List(List(xs, ys), List())
   }
 }

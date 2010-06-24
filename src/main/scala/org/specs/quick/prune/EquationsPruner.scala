@@ -36,15 +36,15 @@ trait EquationsPruner extends org.specs.Sugar {
   private[prune] def substitute(a: ValuedExpression, b: ValuedExpression, terms: List[ValuedExpression]) = {
 	val bindings: List[Bindings] = allBindings(a, terms).distinct
 	bindings.foldLeft(Nil:List[Equality[ValuedExpression]]) { (res, cur) => 
-	  Equality(a.substitute(cur.toMap), b.substitute(cur.toMap)) :: res
+	  Equality(a.substitute(cur.map), b.substitute(cur.map)) :: res
 	} 
   } 
   
   private[prune] def allBindings(a: ValuedExpression, terms: List[ValuedExpression]): List[Bindings] = {
-	cartesianProduct(possibleValues(a, terms)).distinct.map { case params =>
-	  val bindings = Bindings(a)
+	cartesianProduct(possibleValues(a, terms)).map { case params =>
+	  var bindings = Bindings(a, Map())
 	  a.variables.zip(params) foreach { case (variable, value) =>
-	    bindings.add(variable, value)
+	    bindings = bindings.add(variable, value)
 	  }
 	  bindings
 	}
@@ -55,11 +55,8 @@ trait EquationsPruner extends org.specs.Sugar {
       terms.filter(t => t.getType == variable.getType) 
     }
   }
-  case class Bindings(exp: Expression) {
-	private val map = new scala.collection.mutable.HashMap[VariableExpression[_], ValuedExpression]
-	def toMap: scala.collection.immutable.Map[Expression, ValuedExpression] = map.toMap
-	def add(variable: VariableExpression[_], value: ValuedExpression) = map.put(variable, value); this
+  case class Bindings(exp: Expression, map: Map[Expression, ValuedExpression]) {
+	def add(variable: VariableExpression[_], value: ValuedExpression) = Bindings(exp, map + (variable -> value))
 	override def toString = "\nexpression:\n" + exp.toString + "\n" + map.mkString("\n")
   }
-
 }
