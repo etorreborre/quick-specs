@@ -21,4 +21,20 @@ class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner wi
   "pruning equations where there is a substitution" in {
 	prune(List(Equality(apply("+", nil, nil), nil), Equality(apply("+", xs, nil), xs))).mkString must_== "[+(xs, nil) == xs]" 
   }
+  "pruning equations where there is a substitution of a variable" in {
+	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ys, nil), ys))).mkString must_== "[+(xs, nil) == xs]" 
+  }
+  "not pruning equations where there is not a substitution of a variable" in {
+	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nil), ints))).mkString must_== 
+		"[+(xs, nil) == xs],[+(ints, nil) == ints]" 
+  }
+  val expression = ValuedExpressionWithVariables(xs, i)
+  val terms = List(xs, ys, b)
+  "the list of all bindings for an expression must be the cartesian product" +
+  " of all possible values, using the types in a list of terms" in {
+	allBindings(expression, terms) must_== List(Bindings(expression))
+  }
+  "the possible values for an expression, using a list of terms is the list of a terms having the same type of each variable" in {
+	 possibleValues(expression, terms) must_== List(List(xs, ys), List())
+  }
 }

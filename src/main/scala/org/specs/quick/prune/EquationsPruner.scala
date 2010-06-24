@@ -16,7 +16,6 @@ trait EquationsPruner extends org.specs.Sugar {
 	  val Equality(a, b) = cur
 	  a :: b ::: res
 	}
-	println("the universe is " + universe)
 	equalities.sortBy(_.toString.size).foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
 	   if (congruence.isCongruent(cur))
 	  	 res
@@ -33,26 +32,28 @@ trait EquationsPruner extends org.specs.Sugar {
 	   }
 	}.sortBy(_.toString.size)
   }
-  private def substitute(a: ValuedExpression, b: ValuedExpression, terms: List[ValuedExpression]) = {
+  
+  private[prune] def substitute(a: ValuedExpression, b: ValuedExpression, terms: List[ValuedExpression]) = {
 	val bindings: List[Bindings] = allBindings(a, terms).distinct
-	println("terms are " + terms)
-	println("bindings are "+bindings)
 	bindings.foldLeft(Nil:List[Equality[ValuedExpression]]) { (res, cur) => 
 	  Equality(a.substitute(cur.toMap), b.substitute(cur.toMap)) :: res
 	} 
   } 
-  private def allBindings(a: ValuedExpression, terms: List[ValuedExpression]): List[Bindings] = {
-	val possibleValues = a.variables.map { variable =>
-	  terms.filter(t => t.getType == variable.getType) 
-	}
-	cartesianProduct(possibleValues).distinct.map { case params =>
+  
+  private[prune] def allBindings(a: ValuedExpression, terms: List[ValuedExpression]): List[Bindings] = {
+	cartesianProduct(possibleValues(a, terms)).distinct.map { case params =>
 	  val bindings = Bindings(a)
 	  a.variables.zip(params) foreach { case (variable, value) =>
 	    bindings.add(variable, value)
 	  }
 	  bindings
 	}
-	
+  }
+  
+  private[prune] def possibleValues(a: ValuedExpression, terms: List[ValuedExpression]) = {
+    a.variables.map { variable =>
+      terms.filter(t => t.getType == variable.getType) 
+    }
   }
   case class Bindings(exp: Expression) {
 	private val map = new scala.collection.mutable.HashMap[VariableExpression[_], ValuedExpression]
