@@ -15,6 +15,7 @@ trait Variable[A] {
   def value: A
   def evaluate: A
   def show = name
+  override def hashCode = getType.hashCode
   override def toString = show
 }
 /**
@@ -23,7 +24,7 @@ trait Variable[A] {
 class ArbitraryVariable[A](val name: String)(implicit m: ClassManifest[A], arb: Arbitrary[A], params: Gen.Params) extends Variable[A] {
   private var arbValue: A = evaluate
   
-  def getType = m.erasure.getName
+  def getType = m.toString
   def value: A = arbValue
   def evaluate = { arbValue = arb.arbitrary.apply(params).get; value }
 }
@@ -31,7 +32,7 @@ class ArbitraryVariable[A](val name: String)(implicit m: ClassManifest[A], arb: 
  * This variable always return the same value
  */
 class Constant[A](val name: String, v: A)(implicit m: ClassManifest[A]) extends Variable[A] {
-  def getType = m.erasure.getName
+  def getType = m.toString
   def value = evaluate
   def evaluate = v
 }

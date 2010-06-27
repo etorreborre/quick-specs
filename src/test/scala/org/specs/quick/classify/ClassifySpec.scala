@@ -3,7 +3,8 @@ import org.specs.quick.expression._
 import org.specs.quick._
 import org.specs._
 
-class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier with ExpressionsCombiner with SampleLists with Sugar {
+class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier with ExpressionsCombiner with SampleLists 
+  with SampleVariables with Sugar {
   noDetailedDiffs()
   override val partitionsNumber = 4
   combineDepth(1)

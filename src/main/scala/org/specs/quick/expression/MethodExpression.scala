@@ -30,7 +30,7 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression {
 		case Nil => Nil
 		case parameterTypes => parameterTypes.map(t => expressions.toList.filter(e => typesMatch(e.getType, t)))
 	}
-    cartesianProduct(applicable)
+	cartesianProduct(applicable).distinct
   }
   private val loader = getClass.getClassLoader
   /**
@@ -44,8 +44,13 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression {
 	    case e: java.lang.ClassNotFoundException => None
 	  }
 	}
-	val c2 = load(t2, "couldn't find class " +  t2 + " to check if it is assignable from " + t1)
-	val c1 = load(t1, "couldn't find class " +  t1 + " to check if it can be assigned to " + t2)
-	c2.map(k2 => c1.map(k2.isAssignableFrom(_))).flatMap(c => c).getOrElse(false)
+	def c1InstanceOfc2 = {
+	  val c2 = load(t2, "couldn't find class " +  t2 + " to check if it is assignable from " + t1)
+	  val c1 = load(t1, "couldn't find class " +  t1 + " to check if it can be assigned to " + t2)
+	  c2.map(k2 => c1.map(k2.isAssignableFrom(_))).flatMap(c => c).getOrElse(false)
+	}
+	t1 == t2 ||
+	t1.takeWhile(_ != '[') == t2.takeWhile(_ != '[') ||
+	c1InstanceOfc2
   }
 }

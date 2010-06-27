@@ -1,11 +1,11 @@
 package org.specs.quick.expression
 import org.specs._
 import org.specs.quick.methods._
-import org.specs.quick.SampleLists
+import org.specs.quick._
 import org.scalacheck.Gen
 import org.scalacheck.util._
 
-class CombineSpec extends Specification with ScalaMethodsFactory with ExpressionsCombiner with SampleLists {
+class CombineSpec extends Specification with ScalaMethodsFactory with ExpressionsCombiner with SampleLists with SampleVariables {
   "the combine method" should {
     "combine an expression taking a 2 variables and 1 variable in 2 expressions: a, exp(a, a)" in {
       combine(plusPlus, List(xs)).expressions.sortBy(_.toString.size).map(_.show).toString must_== 
@@ -14,7 +14,7 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
     "combine 2 expressions and one variable" in {
       combineDepth(1)
       noDetailedDiffs()
-      val methods = combineMethodList(List(plusPlus, nil), List(xs)).expressions.map(_.show)
+      val methods = combineMethodList(List(plusPlus, nilList), List(xs)).expressions.map(_.show)
       methods.distinct.sortBy(_.length).mkString("\n") must include(List(
           "xs",
     	  "nil()",

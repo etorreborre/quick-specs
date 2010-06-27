@@ -3,7 +3,7 @@ import org.specs._
 import org.specs.quick.expression._
 import org.specs.quick.methods._
 
-class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar with SampleLists {
+class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar with SampleLists with SampleVariables {
   noDetailedDiffs()
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {

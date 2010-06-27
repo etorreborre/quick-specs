@@ -17,10 +17,16 @@ class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
   }
   def isCongruent(equality: Equality[Expression]): Boolean = {
 	val Equality(a, b) = equality
+	println(equality)
 	isCongruent(a, b)
   }
   def isCongruent(a: Expression, b: Expression): Boolean = {
-	val Equality(u, v) = (flattenCurried(Equality(a.curryfy, b.curryfy)).collect { case e @ Equality(Curry(x), Curry(y)) => e }).apply(0)
+	val Equality(u, v) = (flattenCurried(Equality(a.curryfy, b.curryfy)).collect { 
+		case e @ Equality(Curry(x), Curry(y)) => e 
+    }).apply(0)
+	println("rep "+representative)
+	println("u, v: "+(u, v))
+	println("rep(u, v) "+(representative.get(u), representative.get(v)))
 	(representative.get(u), representative.get(v)) match {
 	  case (Some(x), Some(y)) => x == y
 	  case other => false

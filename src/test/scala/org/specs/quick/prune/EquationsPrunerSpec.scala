@@ -5,7 +5,7 @@ import org.specs._
 import org.specs.quick.methods._
 import org.specs.quick.expression._
 
-class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner with ConstantExpressions {
+class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner with SampleExpressions {
   "pruning equations must remove b = a if a = b is already there" in {
 	prune(List(Equality(a, b), Equality(b, a))).mkString must_== "[a == b]" 
   }
@@ -25,12 +25,11 @@ class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner wi
 	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ys, nil), ys))).mkString must_== "[+(xs, nil) == xs]" 
   }
   "not pruning equations where there is not a substitution of a variable" in {
-	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nil), ints))).mkString must_== 
-		"[+(xs, nil) == xs],[+(ints, nil) == ints]" 
+	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nilInts), ints))).mkString must_== 
+		"[+(xs, nil) == xs][+(ints, nilInts) == ints]" 
   }
   "the list of all bindings for an expression must be the cartesian product" +
   " of all possible values, using the types in a list of terms" in {
-	println("list of all bindings")
     val expression = ValuedExpressionWithVariables(xs)
 	val terms = List(xs, ys)
     allBindings(expression, terms) must_== List(Bindings(expression, Map(xs -> xs)), Bindings(expression, Map(xs -> ys)))

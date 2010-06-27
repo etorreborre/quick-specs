@@ -42,7 +42,7 @@ private[prune] trait EqualityFlattener {
 	  case _ => println("Not in a curried form " + curried.a.show + " and " + curried.b.show); Nil 
     }
   }
-  def newId(a: Curried) = a.hashCode.toString
+  def newId(a: Curried) = a.show+":"+a.hashCode.toString
 }
 private[prune] object EqualityFlattener extends EqualityFlattener 
 

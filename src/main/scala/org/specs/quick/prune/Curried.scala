@@ -10,5 +10,6 @@ private[prune] case class Apply(a: Curried, b: Curried) extends Curried {
 }
 private[prune] case class Curry(a: Any) extends Curried {
   override def toString = a.toString
+  override def hashCode = a.hashCode
   protected def value = a.toString
 }

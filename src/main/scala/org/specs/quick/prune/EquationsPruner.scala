@@ -16,6 +16,7 @@ trait EquationsPruner extends org.specs.Sugar {
 	  val Equality(a, b) = cur
 	  a :: b ::: res
 	}
+	println("universe "+universe)
 	equalities.sortBy(_.toString.size).foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
 	   if (congruence.isCongruent(cur))
 	  	 res
