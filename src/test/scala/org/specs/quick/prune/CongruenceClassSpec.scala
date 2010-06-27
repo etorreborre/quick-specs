@@ -4,8 +4,11 @@ import org.specs.quick.equality._
 import org.specs.quick.methods._
 import org.specs.quick.expression._
 
-class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for equalities") with SampleExpressions with ExpressionCurrier {
-  val congruence = new CongruenceClass
+class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for equalities") with SampleExpressions with ExpressionCurrier { outer =>
+  val congruence = new CongruenceClass {
+    def println(m: Any) = outer.println(m)
+    def printf(format: String, args: Any*) = outer.printf(format, args)
+  }
   "it" should {
 	"accept equalities with an application and check congruence for a symetric equality" in {
 	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)

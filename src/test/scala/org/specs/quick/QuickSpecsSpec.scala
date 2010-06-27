@@ -2,8 +2,9 @@ package org.specs.quick
 import org.specs._
 import org.specs.quick.expression._
 import org.specs.quick.methods._
+import org.specs.log._
 
-class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar with SampleLists with SampleVariables {
+class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar with SampleLists with SampleVariables with Log {
   noDetailedDiffs()
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {
@@ -12,6 +13,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar w
       equations must have size(2)
     }
     "return a list of equations for a case with 2 variables" in {
+      level = Debug
       combineDepth(1)
       quick(Lists.accept("\\+\\+", "nil"), xs, ys) must_== List(
         "[xs == ++(nil(), xs)]",

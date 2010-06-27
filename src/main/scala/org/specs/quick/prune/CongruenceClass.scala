@@ -3,33 +3,43 @@ import org.specs.quick.equality._
 import org.specs.quick.expression._
 import org.specs.collection.ListMultiMap
 import scala.collection.mutable._
+import org.specs.log._
 
-class CongruenceClass extends ExpressionCurrier with EqualityFlattener {
+abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener with Log {
   private val useList = new ListMultiMap[Curried, Equality[_]]
   private val representative = new HashMap[Curried, Curried]
   private val classList = new ListMultiMap[Curried, Curried]
   private val lookup = new HashMap[(Curried, Curried), Curried]
   private val pending = new Stack[(Curried, Curried)]
-  
   def add(equality: Equality[Expression]) {
+	info("adding "+equality)
 	initialize(equality)
 	recomputeCongruence()
   }
   def isCongruent(equality: Equality[Expression]): Boolean = {
 	val Equality(a, b) = equality
-	println(equality)
-	isCongruent(a, b)
+	debug("testing the congruence of "+equality)
+	val congruent = isCongruent(a, b)
+	debug(" the congruence of "+equality+" = "+congruent)
+    congruent	
   }
   def isCongruent(a: Expression, b: Expression): Boolean = {
-	val Equality(u, v) = (flattenCurried(Equality(a.curryfy, b.curryfy)).collect { 
+	val eqs = (flattenCurried(Equality(a.curryfy, b.curryfy)).collect { 
 		case e @ Equality(Curry(x), Curry(y)) => e 
-    }).apply(0)
-	println("rep "+representative)
-	println("u, v: "+(u, v))
-	println("rep(u, v) "+(representative.get(u), representative.get(v)))
-	(representative.get(u), representative.get(v)) match {
-	  case (Some(x), Some(y)) => x == y
-	  case other => false
+    })
+    if (eqs.isEmpty) {
+	  debug("no curried equalities "+flattenCurried(Equality(a.curryfy, b.curryfy)))
+      false
+    }
+    else {
+      val Equality(u, v) = eqs.apply(0) 
+	  debug("the representative are "+representative)
+	  debug("The curried members are "+(u, v))
+	  debug("Their representative are "+(representative.get(u), representative.get(v)))
+	  (representative.get(u), representative.get(v)) match {
+		case (Some(x), Some(y)) => x == y
+		case other => false
+      }
 	}
   }
   

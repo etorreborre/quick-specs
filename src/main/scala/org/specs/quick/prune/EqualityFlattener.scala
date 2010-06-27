@@ -31,16 +31,24 @@ private[prune] trait EqualityFlattener {
    	  case Equality(Apply(Curry(a), Curry(b)), Curry(c)) => List(curried)
 	  
 	  case Equality(Apply(a, b), c) => {
-	    val flattenA = flattenCurried(Equality(a, Curry(newId(a))))
-	    val flattenB = flattenCurried(Equality(b, Curry(newId(b))))
-	    val flattenAB = flattenCurried(Equality(Apply(Curry(newId(a)), Curry(newId(b))), Curry(c)))
-	    val flattenC = flattenCurried(Equality(c, Curry(newId(c))))
+	    val flattenA = flattenCurried(Equality(a, newCurry(a)))
+	    val flattenB = flattenCurried(Equality(b, newCurry(b)))
+	    val flattenAB = flattenCurried(Equality(Apply(newCurry(a), newCurry(b)), newCurry(c)))
+	    val flattenC = flattenCurried(Equality(c, newCurry(c)))
 	    flattenA ::: flattenB ::: flattenAB ::: flattenC
 	  }
 	  case Equality(c, Apply(a, b)) => flattenCurried(Equality(Apply(a, b), Curry(c)))
 	  
 	  case _ => println("Not in a curried form " + curried.a.show + " and " + curried.b.show); Nil 
     }
+  }
+  def newCurry(a: Curried): Curry = {
+	a match {
+	  case Curry(u: Curried) => Curry(newId(u))
+	  case Curry(other) => Curry(other)
+	  case Apply(u, v) => newCurry(Curry(u.value+v.value))
+	  case other => Curry(newId(a))
+	}
   }
   def newId(a: Curried) = a.show+":"+a.hashCode.toString
 }

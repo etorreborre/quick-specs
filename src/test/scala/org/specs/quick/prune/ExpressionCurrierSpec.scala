@@ -19,6 +19,7 @@ class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrie
   }
   "A constant variable expression should be curried with just its name" in {
     constVariableExp.curryfy must_== Curry("const")
+    constVariableExp.curryfy.toString must_== "Curry("+constVariableExp.toString+")"
   }
   val m = ScalaMethods.create(new Object).methods(0)
   "A method expression should be curried with just its name" in {

@@ -5,19 +5,23 @@ import org.specs.SpecificationWithJUnit
 import org.scalacheck.Gen
 import EqualityParser._
 import org.specs.matcher._
+import org.specs.quick.equality._
 
 class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattener {
+  noDetailedDiffs()
   "A curried equality" should {
-    "be flattened as a list of equalities" in {
-      noDetailedDiffs()
-      // .(.(a, b), c) = d => .(ab, c) = d; .(a, b) = ab 
-      flattenEqualities(fromString(".(.(a, b), c) = d")).toString must 
-        be_==(List(fromString(".(ab, c) = d"), fromString(".(a, b) = ab")).toString) or
-        be_==(List(fromString(".(a, b) = ab"), fromString(".(ab, c) = d")).toString)
+    "not flatten Curry(a) = Curry(b)" in {
+      flattenEqualities(Equality(Curry("a"), Curry("b")))(0) must be_==(Equality(Curry("a"), Curry("b")))
+    }
+    "not flatten Apply(Curry(a), Curry(b)) = Curry(c)" in {
+      flattenEqualities(Equality(Apply(Curry("a"), Curry("b")), Curry("c"))) must_== 
+    	List(Equality(Apply(Curry("a"), Curry("b")), Curry("c")))
+    }
+    "flatten Apply(Apply(Curry(a), Curry(b)), Curry(c)) = Curry(d)" in {
+      flattenEqualities(Equality(Apply(Apply(Curry("a"), Curry("b")), Curry("c")), Curry("d"))) must_== List(
+        Equality(Apply(Curry("a"), Curry("b")), Curry("ab")),
+    	Equality(Apply(Curry("ab"), Curry("c")), Curry("d")))
     }
   }
-  override def newId(a: Curried) = a match {
-	  case Apply(u, v) => u.toString + v.toString
-	  case Curry(u) => u.toString
-  }
+  override def newId(a: Curried) = a.show
 }

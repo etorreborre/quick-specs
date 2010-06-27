@@ -6,28 +6,43 @@ import ExpressionCurrier._
 import CongruenceClosure._
 import org.specs.quick.Functions._
 import org.specs.quick.collection.CartesianProduct._
+import org.specs.log._
 
-trait EquationsPruner extends org.specs.Sugar {
+trait EquationsPruner extends org.specs.Sugar with Log { outer =>
   val prune = pruneEquations _
   
-  private def pruneEquations(equalities: List[Equality[ValuedExpression]]): List[Equality[_]] = {
-	val congruence = new CongruenceClass
+  private def pruneEquations(equalities: List[Equality[ValuedExpression]]): List[Equality[_]] = { 
+    val congruence = new CongruenceClass {
+	  def println(m: Any) = outer.println(m)
+	  def printf(format: String, args: Any*) = outer.printf(format, args)
+	  level = outer.level
+    }
 	val universe = equalities.foldLeft(Nil:List[ValuedExpression]) { (res, cur) => 
 	  val Equality(a, b) = cur
 	  a :: b ::: res
 	}
-	println("universe "+universe)
+	debug("The equalities are "+equalities.mkString("\n"))
+	debug("The universe is "+universe)
+	
 	equalities.sortBy(_.toString.size).foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
-	   if (congruence.isCongruent(cur))
-	  	 res
-	   else {
+	  if (congruence.isCongruent(cur)) {
+	 	debug(cur + " is congruent")
+	    res
+	  }
+	  else {
+	 	debug(cur + " is not congruent")
 	  	congruence.add(cur)
     	val Equality(a: ValuedExpression, b: ValuedExpression) = cur
 
+	 	debug("The subsitutes for "+cur+" are "+substitute(a, b, universe))
 	  	substitute(a, b, universe).foreach { sub =>
 	  	  val Equality(u, v) = sub
-	  	  if (universe.contains(u) || universe.contains(v))
+	  	  if (universe.contains(u) || universe.contains(v)) {
+   	 	    debug("adding "+sub+" to the congruence relationship")
 	  	 	congruence.add(sub)
+	  	  } else {
+   	 	    debug(u+" and "+v+" don't belong to the universe")
+	  	  }
 	  	}
 	  	cur :: res
 	   }
@@ -36,8 +51,13 @@ trait EquationsPruner extends org.specs.Sugar {
   
   private[prune] def substitute(a: ValuedExpression, b: ValuedExpression, terms: List[ValuedExpression]) = {
 	val bindings: List[Bindings] = allBindings(a, terms).distinct
-	bindings.foldLeft(Nil:List[Equality[ValuedExpression]]) { (res, cur) => 
-	  Equality(a.substitute(cur.map), b.substitute(cur.map)) :: res
+	bindings.foldLeft(Nil:List[Equality[ValuedExpression]]) { (res, cur) =>
+	  val (subA, subB) = (a.substitute(cur.map), b.substitute(cur.map))
+	  if (a != subA || b != subB)
+	    Equality(subA, subB) :: res
+	  else 
+	 	res
+		  
 	} 
   } 
   
