@@ -8,7 +8,7 @@ import org.specs.quick.Functions._
 import org.specs.quick.collection.CartesianProduct._
 import org.specs.log._
 
-trait EquationsPruner extends org.specs.Sugar with Log { outer =>
+trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer =>
   val prune = pruneEquations _
   
   private def pruneEquations(equalities: List[Equality[ValuedExpression]]): List[Equality[_]] = { 
@@ -26,11 +26,11 @@ trait EquationsPruner extends org.specs.Sugar with Log { outer =>
 	
 	equalities.sortBy(_.toString.size).foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
 	  if (congruence.isCongruent(cur)) {
-	 	debug(cur + " is congruent")
+	 	debug(cur + " is congruent so is not added to the congruence structure")
 	    res
 	  }
 	  else {
-	 	debug(cur + " is not congruent")
+	 	debug(cur + " IS A NEW EQUATION!")
 	  	congruence.add(cur)
     	val Equality(a: ValuedExpression, b: ValuedExpression) = cur
 
@@ -38,8 +38,12 @@ trait EquationsPruner extends org.specs.Sugar with Log { outer =>
 	  	substitute(a, b, universe).foreach { sub =>
 	  	  val Equality(u, v) = sub
 	  	  if (universe.contains(u) || universe.contains(v)) {
-   	 	    debug("adding "+sub+" to the congruence relationship")
-	  	 	congruence.add(sub)
+	  	 	if (congruence.isCongruent(sub))
+   	 	      debug(sub+" is already congruent")
+   	 	    else {
+   	 	      debug("adding the substitute "+sub+" to the congruence relationship")
+	  	 	  congruence.add(sub)
+	  	 	}
 	  	  } else {
    	 	    debug(u+" and "+v+" don't belong to the universe")
 	  	  }
@@ -73,7 +77,7 @@ trait EquationsPruner extends org.specs.Sugar with Log { outer =>
   
   private[prune] def possibleValues(a: ValuedExpression, terms: List[ValuedExpression]) = {
     a.variables.map { variable =>
-      terms.filter(t => t.getType == variable.getType) 
+      terms.filter(t => typesMatch(t.getType, variable.getType)) 
     }
   }
   case class Bindings(exp: Expression, map: Map[Expression, ValuedExpression]) {

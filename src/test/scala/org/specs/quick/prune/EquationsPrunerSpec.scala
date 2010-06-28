@@ -39,4 +39,9 @@ class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner wi
     val terms = List(xs, ys, b)
 	possibleValues(expression, terms) must_== List(List(xs, ys), List())
   }
+  "the possible values for an expression, using a list of terms is the list of a terms having the same type of each variable - 2" in {
+    val expression = ValuedExpressionWithVariables(xs)
+    val terms = List(xs, nil)
+	possibleValues(expression, terms) must_== List(List(xs, nil))
+  }
 }

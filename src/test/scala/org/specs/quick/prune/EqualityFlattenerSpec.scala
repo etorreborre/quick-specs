@@ -19,8 +19,8 @@ class EqualityFlattenerSpec extends SpecificationWithJUnit with EqualityFlattene
     }
     "flatten Apply(Apply(Curry(a), Curry(b)), Curry(c)) = Curry(d)" in {
       flattenEqualities(Equality(Apply(Apply(Curry("a"), Curry("b")), Curry("c")), Curry("d"))) must_== List(
-        Equality(Apply(Curry("a"), Curry("b")), Curry("ab")),
-    	Equality(Apply(Curry("ab"), Curry("c")), Curry("d")))
+        Equality(Apply(Curry("ab"), Curry("c")), Curry("d")),
+        Equality(Apply(Curry("a"), Curry("b")), Curry("ab")))
     }
   }
   override def newId(a: Curried) = a.show

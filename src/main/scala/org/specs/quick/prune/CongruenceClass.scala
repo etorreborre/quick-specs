@@ -11,36 +11,29 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
   private val classList = new ListMultiMap[Curried, Curried]
   private val lookup = new HashMap[(Curried, Curried), Curried]
   private val pending = new Stack[(Curried, Curried)]
+  
   def add(equality: Equality[Expression]) {
-	info("adding "+equality)
+	info("    adding "+equality)
 	initialize(equality)
 	recomputeCongruence()
+	assert(isCongruent(equality))
   }
   def isCongruent(equality: Equality[Expression]): Boolean = {
-	val Equality(a, b) = equality
-	debug("testing the congruence of "+equality)
-	val congruent = isCongruent(a, b)
-	debug(" the congruence of "+equality+" = "+congruent)
-    congruent	
-  }
-  def isCongruent(a: Expression, b: Expression): Boolean = {
-	val eqs = (flattenCurried(Equality(a.curryfy, b.curryfy)).collect { 
-		case e @ Equality(Curry(x), Curry(y)) => e 
-    })
-    if (eqs.isEmpty) {
-	  debug("no curried equalities "+flattenCurried(Equality(a.curryfy, b.curryfy)))
-      false
-    }
-    else {
-      val Equality(u, v) = eqs.apply(0) 
-	  debug("the representative are "+representative)
-	  debug("The curried members are "+(u, v))
-	  debug("Their representative are "+(representative.get(u), representative.get(v)))
-	  (representative.get(u), representative.get(v)) match {
-		case (Some(x), Some(y)) => x == y
-		case other => false
-      }
+	debug("    testing the congruence of "+equality)
+	debug(toString)
+	val flattened:List[Equality[Curried]] = flattenCurried(equality.map(_.curryfy))
+    val congruent = flattened.forall { 
+	  case e @ Equality(Apply(a, b), c @ Curry(_)) => 
+	    debug("lookup for "+e+" "+(representative.get(c), lookup.get((a, b)).map(representative(_))))
+	    representative.get(c).isDefined && 
+	    lookup.get((a, b)).map(representative(_)) == representative.get(c)
+	  case e @ Equality(a, b) => 
+	    debug("rep for "+e+" "+(representative.get(a), representative.get(b)))
+	    representative.get(a).isDefined && 
+	    representative.get(a) == representative.get(b)
 	}
+	debug("    "+equality+" is congruent "+congruent)
+	congruent
   }
   
   private def initialize(equality: Equality[Expression]) {
@@ -63,31 +56,40 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
   private def recomputeCongruence() {
     while (!pending.isEmpty) { 
       val (a, b) = pending.pop
-      val (ra, rb) = (representative(a), representative(b)) 
-      if (ra != rb && classList(ra).size <= classList(rb).size) {
-        for (c <- classList(ra)) {
-          representative(c) = rb
-          classList.put(rb, c)
-        }
-        for (equality @ 
-        	 Equality(Apply(c: Curried, d: Curried), e: Curried) <- useList(ra)) {
-          val (rc, rd, re) = (representative(c), representative(d), representative(e))
-          lookup.get(rc, rd) map { f => 
-            val rf = representative(f)
-            if (rf != re) pending.push((re, rf))
-          }	
-          lookup((rc, rd)) = re
-          useList.put(rb, equality)
-        }
+      val (ra, rb) = (representative(a), representative(b))
+      if (ra != rb) {
+        update(ra, rb)
       } 
     }	  
   }
+  private def update(ra: Curried, rb: Curried) {
+	debug("    classList(ra) "+classList(ra))
+	debug("    classList(rb) "+classList(rb))
+	if (classList(ra).size <= classList(rb).size) {
+	  for (c <- classList(ra)) {
+	    representative(c) = rb
+	    classList.put(rb, c)
+	  }
+	  for (equality @ 
+	       Equality(Apply(c: Curried, d: Curried), e: Curried) <- useList(ra)) {
+	    val (rc, rd, re) = (representative(c), representative(d), representative(e))
+	    lookup.get(rc, rd) map { f => 
+	      val rf = representative(f)
+	      if (rf != re) pending.push((re, rf))
+	    }	
+	    lookup((rc, rd)) = re
+	    useList.put(rb, equality)
+	  }
+    }
+	else update(rb, ra)
+		
+  }
   override def toString = {
-	List("useList " + useList,
-         "representative " + representative,
-         "classList " + classList,
-         "lookup " + lookup,
-         "pending " +pending).mkString("\n")
+	List("    useList " + useList,
+         "    representative " + representative,
+         "    classList " + classList,
+         "    lookup " + lookup,
+         "    pending " +pending).mkString("\n")
 
   }
 }

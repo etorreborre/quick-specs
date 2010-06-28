@@ -16,8 +16,8 @@ class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for
 	  
 	  congruence.add(eq1)
 
-	  congruence.isCongruent(eq1) aka (eq1+" is already registered") must beTrue
-	  congruence.isCongruent(eq2) aka (eq2+" is already registered") must beTrue
+	  congruence.isCongruent(eq1) aka (eq1+" must be already registered") must beTrue
+	  congruence.isCongruent(eq2) aka (eq2+" must be already registered") must beTrue
 	}
 	"refuse the congruence of 2 equations differing by type variables" in {
 	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
@@ -25,7 +25,7 @@ class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for
 	  
 	  congruence.add(eq1)
 
-	  congruence.isCongruent(eq1) aka (eq1+" is already registered") must beTrue
+	  congruence.isCongruent(eq1) aka (eq1+" must be already registered") must beTrue
 	  congruence.isCongruent(eq2) aka (eq2+" must not be already registered") must beFalse
 	}
   } 	

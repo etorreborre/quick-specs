@@ -28,16 +28,21 @@ private[prune] trait EqualityFlattener {
    	  case Equality(Curry(a), Curry(b)) if (a == b) => List()
    	  case Equality(Curry(a), Curry(b)) if (a != b) => List(curried)
 
-   	  case Equality(Apply(Curry(a), Curry(b)), Curry(c)) => List(curried)
+   	  case Equality(app @ Apply(Curry(a), Curry(b)), Curry(c)) => {
+   		List(Equality(Curry(newId(app)), app), Equality(Curry(newId(app)), Curry(c)))
+   	  }
+	  case Equality(Curry(c), app @ Apply(Curry(a), Curry(b))) => {
+	 	 List(Equality(Curry(newId(app)), app), Equality(Curry(newId(app)), Curry(c)))
+	  }
 	  
 	  case Equality(Apply(a, b), c) => {
 	    val flattenA = flattenCurried(Equality(a, newCurry(a)))
 	    val flattenB = flattenCurried(Equality(b, newCurry(b)))
-	    val flattenAB = flattenCurried(Equality(Apply(newCurry(a), newCurry(b)), newCurry(c)))
 	    val flattenC = flattenCurried(Equality(c, newCurry(c)))
-	    flattenA ::: flattenB ::: flattenAB ::: flattenC
+	    val flattenAB = flattenCurried(Equality(Apply(newCurry(a), newCurry(b)), newCurry(c)))
+	    flattenAB ::: flattenC ::: flattenA  ::: flattenB
 	  }
-	  case Equality(c, Apply(a, b)) => flattenCurried(Equality(Apply(a, b), Curry(c)))
+	  case Equality(c, Apply(a, b)) => flattenCurried(Equality(Apply(a, b), c))
 	  
 	  case _ => println("Not in a curried form " + curried.a.show + " and " + curried.b.show); Nil 
     }
