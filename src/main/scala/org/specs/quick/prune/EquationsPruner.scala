@@ -15,7 +15,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
     val congruence = new CongruenceClass {
 	  def println(m: Any) = outer.println(m)
 	  def printf(format: String, args: Any*) = outer.printf(format, args)
-	  level = outer.level
+	//  level = outer.level
     }
 	val universe = equalities.foldLeft(Nil:List[ValuedExpression]) { (res, cur) => 
 	  val Equality(a, b) = cur
@@ -23,22 +23,16 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	}
 	debug("The equalities are "+equalities.mkString("\n"))
 	debug("The universe is "+universe)
-	
-	def variablesNumber(equality: Equality[_]) = equality match {
-	  case Equality(a:ValuedExpression, b: ValuedExpression) => (a.variables.map(_.name) ::: b.variables.map(_.name)).distinct.size
-	  case other => 0
-	}
-	debug("sorted equalities are "+equalities.sortBy(variablesNumber(_)).reverse)
-	equalities.sortBy(variablesNumber(_)).reverse.foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
+	val result = new scala.collection.mutable.ListBuffer[Equality[ValuedExpression]]
+	equalities.sortBy(_.toString.size).foreach { cur =>
 	  if (congruence.isCongruent(cur)) {
 	 	debug(cur + " is congruent so is not added to the congruence structure")
-	    res
 	  }
 	  else {
 	 	debug(cur + " IS A NEW EQUATION!")
 	  	congruence.add(cur)
+	  	result += cur
     	val Equality(a: ValuedExpression, b: ValuedExpression) = cur
-
 	 	debug("The subsitutes for "+cur+" are "+substitute(a, b, universe))
 	  	substitute(a, b, universe).foreach { sub =>
 	  	  val Equality(u, v) = sub
@@ -49,13 +43,16 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
    	 	      debug("adding the substitute "+sub+" to the congruence relationship")
 	  	 	  congruence.add(sub)
 	  	 	}
-	  	  } else {
-   	 	    debug(u+" and "+v+" don't belong to the universe")
-	  	  }
+  	 	    if (u.variables.size + v.variables.size > a.variables.size + b.variables.size) {
+  	 	      result -= cur
+  	 	 	  result += sub
+  	 	 	  debug("removing "+cur+" and adding "+"sub = "+result)
+    	 	}
+	  	  } else debug(u+" and "+v+" don't belong to the universe")
 	  	}
-	  	cur :: res
-	   }
-	}.sortBy(_.toString.size)
+	  }
+	}
+	result.toList.sortBy(_.toString.size)
   }
   
   private[prune] def substitute(a: ValuedExpression, b: ValuedExpression, terms: List[ValuedExpression]) = {

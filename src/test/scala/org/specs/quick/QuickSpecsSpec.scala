@@ -14,6 +14,7 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar w
     }
     "return a list of equations for a case with 2 variables and one operation" in {
       combineDepth(1)
+     // level = Debug
       quick(Lists.accept("\\+\\+"), xs, ys) must_== List(
         "[++(xs, ys) == ++(ys, xs)]"
       ).mkString("\n")
