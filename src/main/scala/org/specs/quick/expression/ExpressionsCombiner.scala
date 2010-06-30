@@ -2,14 +2,17 @@ package org.specs.quick.expression
 import org.specs.quick.methods._
 import org.specs.quick.classify._
 import org.specs.util.Property
+import org.specs.log._
 /**
  * This trait takes methods and variables and combines them several times
  */
-trait ExpressionsCombiner {
+trait ExpressionsCombiner extends Log {
   val combine = (combineMethods _).tupled
   val combineDepth = Property(2)
   protected def combineMethods(methods: ScalaMethods, variables: List[Variable[_]]): CombinedExpressions = {
-    combineMethodList(methods.methods, variables)
+    val combined = combineMethodList(methods.methods, variables)
+    debug("combined " + combined)
+    combined
   }
   protected def combineMethodList(methods: List[ScalaMethod], variables: List[Variable[_]]): CombinedExpressions = {
     combineExpressions(methods.map(MethodExpression(_)), variables.map(VariableExpression(_)), variables)

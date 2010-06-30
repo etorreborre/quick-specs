@@ -12,8 +12,13 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar w
       val equations = quick(Lists.accept("\\+\\+", "nil"), xs).split("\n")
       equations must have size(2)
     }
+    "return a list of equations for a case with 2 variables and one operation" in {
+      combineDepth(1)
+      quick(Lists.accept("\\+\\+"), xs, ys) must_== List(
+        "[++(xs, ys) == ++(ys, xs)]"
+      ).mkString("\n")
+    }
     "return a list of equations for a case with 2 variables" in {
-      level = Debug
       combineDepth(1)
       quick(Lists.accept("\\+\\+", "nil"), xs, ys) must_== List(
         "[xs == ++(nil(), xs)]",

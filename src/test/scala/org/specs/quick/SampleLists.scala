@@ -5,7 +5,7 @@ import org.scalacheck.util._
 import org.specs.specification.Tagged
 
 object Lists {
-  def ++[T](l: List[T], l2: List[T]) = l ::: l2
+  def ++[T](l: List[T], l2: List[T]) = (l ::: l2).sortBy(_.hashCode) // make it commutative!
   def nil[T]: List[T] = Nil
   override def toString = "Lists (" + hashCode + ")" 
 }

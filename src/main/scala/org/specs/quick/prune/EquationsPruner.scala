@@ -24,7 +24,12 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	debug("The equalities are "+equalities.mkString("\n"))
 	debug("The universe is "+universe)
 	
-	equalities.sortBy(_.toString.size).foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
+	def variablesNumber(equality: Equality[_]) = equality match {
+	  case Equality(a:ValuedExpression, b: ValuedExpression) => (a.variables.map(_.name) ::: b.variables.map(_.name)).distinct.size
+	  case other => 0
+	}
+	debug("sorted equalities are "+equalities.sortBy(variablesNumber(_)).reverse)
+	equalities.sortBy(variablesNumber(_)).reverse.foldLeft(Nil: List[Equality[_]]) { (res, cur) =>
 	  if (congruence.isCongruent(cur)) {
 	 	debug(cur + " is congruent so is not added to the congruence structure")
 	    res
@@ -77,6 +82,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
   
   private[prune] def possibleValues(a: ValuedExpression, terms: List[ValuedExpression]) = {
     a.variables.map { variable =>
+      debug("variables for expression a "+variable)
       terms.filter(t => typesMatch(t.getType, variable.getType)) 
     }
   }

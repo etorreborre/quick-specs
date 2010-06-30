@@ -28,11 +28,13 @@ private[prune] trait EqualityFlattener {
    	  case Equality(Curry(a), Curry(b)) if (a == b) => List()
    	  case Equality(Curry(a), Curry(b)) if (a != b) => List(curried)
 
-   	  case Equality(app @ Apply(Curry(a), Curry(b)), Curry(c)) => {
-   		List(Equality(Curry(newId(app)), app), Equality(Curry(newId(app)), Curry(c)))
+   	  case Equality(app @ Apply(ca @ Curry(a), cb @ Curry(b)), Curry(c)) => {
+   		val ab = newCurry(Curry(a.toString+b.toString))
+   		List(Equality(ab, app), Equality(ab, Curry(c)))
    	  }
-	  case Equality(Curry(c), app @ Apply(Curry(a), Curry(b))) => {
-	 	 List(Equality(Curry(newId(app)), app), Equality(Curry(newId(app)), Curry(c)))
+	  case Equality(Curry(c), app @ Apply(ca @ Curry(a), cb @ Curry(b))) => {
+   		val ab = newCurry(Curry(a.toString+b.toString))
+   		List(Equality(ab, app), Equality(ab, Curry(c)))
 	  }
 	  
 	  case Equality(Apply(a, b), c) => {

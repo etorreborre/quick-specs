@@ -11,6 +11,18 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
       combine(plusPlus, List(xs)).expressions.sortBy(_.toString.size).map(_.show).toString must_== 
     	  "List(xs, ++(xs, xs), ++(++(xs, xs), ++(xs, xs)))"
     }
+    "combine 1 method and 2 variables" in {
+      combineDepth(1)
+      noDetailedDiffs()
+      val methods = combineMethodList(List(plusPlus), List(xs, ys)).expressions.map(_.show)
+      methods.distinct.sortBy(_.length).mkString("\n") must include(List(
+          "xs",
+    	  "ys",
+    	  "++(xs, xs)",
+    	  "++(xs, ys)",
+    	  "++(ys, xs)",
+    	  "++(ys, ys)").mkString("\n"))
+    }
     "combine 2 expressions and one variable" in {
       combineDepth(1)
       noDetailedDiffs()

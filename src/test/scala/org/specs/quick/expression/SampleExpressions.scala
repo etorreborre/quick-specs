@@ -23,14 +23,21 @@ trait SampleExpressions {
 	def variables: List[VariableExpression[_]] = v.toList
 	def substitute(bindings: Map[Expression, ValuedExpression]) = null
   }
-  
+  case class NoVariableExpression[A](constant: Constant[A]) extends ValuedExpression {
+    lazy val getType = constant.getType
+    def evaluate = constant.evaluate
+    def value = constant.value
+    override def show = constant.show
+    def substitute(bindings: Map[Expression, ValuedExpression]) = this
+    def variables: List[VariableExpression[_]] = Nil
+  }
   val a: ConstantExpression = "a"
   val b: ConstantExpression = "b"
   val c: ConstantExpression = "c"
   val d: ConstantExpression = "d"
   val e: ConstantExpression = "e"
   val f: ConstantExpression = "f"
-  val nil: VariableExpression[List[String]] = new VariableExpression(new Constant("nil", List("")))
+  val nil = new NoVariableExpression(new Constant("nil", Nil:List[String]))
   val nilInts: VariableExpression[List[Int]] = new VariableExpression(new Constant("nilInts", List(1)))
   val xs: VariableExpression[List[String]] = new VariableExpression(new Constant("xs", List("xs")))
   val ys: VariableExpression[List[String]] = new VariableExpression(new Constant("ys", List("ys")))
