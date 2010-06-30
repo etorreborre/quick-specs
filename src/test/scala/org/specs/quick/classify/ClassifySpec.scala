@@ -14,9 +14,9 @@ class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier wit
 	"evaluate expressions to separate them to equalities" in {
 	  classify(combined).map(_.toString).mkString("\n") must_== List( 
 	 	  "[xs == xs]",
-	 	  "[++(xs, xs) == ++(xs, xs)]",
-     	  "[nil() == ++(nil(), nil())]",
-	 	  "[++(nil(), xs) == ++(xs, nil())]").mkString("\n")
+	 	  "[xs == ++(nil(), xs)]",
+	 	  "[xs == ++(xs, nil())]",
+     	  "[nil() == ++(nil(), nil())]").mkString("\n")
 	}  
 	"return equalities for tautologies" in {
 	  classify(combined).map(_.toString) must contain("[xs == xs]") 

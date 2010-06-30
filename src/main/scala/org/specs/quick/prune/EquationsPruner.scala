@@ -43,10 +43,13 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
    	 	      debug("adding the substitute "+sub+" to the congruence relationship")
 	  	 	  congruence.add(sub)
 	  	 	}
-  	 	    if (u.variables.size + v.variables.size > a.variables.size + b.variables.size) {
+	  	 	if (variablesNumber(sub) > variablesNumber(cur)) {
   	 	      result -= cur
   	 	 	  result += sub
   	 	 	  debug("removing "+cur+" and adding "+"sub = "+result)
+    	 	} else if (variablesNumber(sub) < variablesNumber(cur) && result.contains(sub)) {
+    	 	  result -= sub
+    	 	  debug("removing sub = "+result)
     	 	}
 	  	  } else debug(u+" and "+v+" don't belong to the universe")
 	  	}
@@ -82,6 +85,11 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
       debug("variables for expression a "+variable)
       terms.filter(t => typesMatch(t.getType, variable.getType)) 
     }
+  }
+  
+  private def variablesNumber(equality: Equality[ValuedExpression]) = {
+	val Equality(a, b) = equality
+	(a.variables ::: b.variables).distinct.size
   }
   case class Bindings(exp: Expression, map: Map[Expression, ValuedExpression]) {
 	def add(variable: VariableExpression[_], value: ValuedExpression) = Bindings(exp, map + (variable -> value))

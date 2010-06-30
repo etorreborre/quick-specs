@@ -16,7 +16,7 @@ trait ExpressionsClassifier extends Log {
   
   private def classifyExpressions(combined: CombinedExpressions)(number: Int = partitionsNumber): List[Equality[ValuedExpression]] = {
 	val partitions = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
-	val result = partitions.flatMap(_.equalities).sortBy(_.toString.size)
+	val result = partitions.flatMap(_.equalities).sortBy(_.toString.size).distinct
 	debug("partitions "+partitions)
 	debug("classified expressions "+result)
 	result
