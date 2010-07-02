@@ -26,10 +26,9 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression wi
    * for each variable we keep a list of all the expressions that have the same type
    */
   private[expression] def applicableParameters(expressions: ValuedExpression*): List[List[ValuedExpression]] = {
-	val applicable: List[List[ValuedExpression]] = method.parameterTypes match {
-		case Nil => Nil
-		case parameterTypes => parameterTypes.map(t => expressions.toList.filter(e => typesMatch(e.getType, t)))
-	}
+	val applicable: List[List[ValuedExpression]] = method.parameterTypes.map {	t => 
+	  expressions.toList.filter(e => typesMatch(e.getType, t))
+    }
 	cartesianProduct(applicable).distinct
   }
 }

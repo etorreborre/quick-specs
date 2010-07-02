@@ -20,7 +20,7 @@ trait SampleLists extends ScalaMethodsFactory with Tagged {
   val plusPlusAndNil = Lists.accept("\\+\\+", "nil")
 }
 trait SampleVariables {
-  implicit val params = Gen.Params(2, StdRand)
+  implicit val parameters: Gen.Params = Gen.Params(2, StdRand)
   implicit val smallLists = Arbitrary(Gen.sized(size => Gen.listOfN(size, Gen.oneOf(1,2,3))))
   val xs = Variable[List[Int]]("xs")
   val ys = Variable[List[Int]]("ys")

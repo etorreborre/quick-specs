@@ -14,8 +14,7 @@ import org.scalacheck._
  *
  * The output of the quick method is a list of equations, one equation per line
  */
-trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with ExpressionsClassifier with EquationsPruner with Functions { this: org.specs.Specification =>
-
+trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with ExpressionsClassifier with EquationsPruner with Functions with DefaultParams { this: org.specs.Specification =>
   /**
    * @return a list of equations for a given list of methods and variables
    */
@@ -30,4 +29,6 @@ trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with Expre
     (methods, variables) |> combine |> classify |> prune |>  (_ mkString "\n")
   } 
 }
-
+trait DefaultParams {
+  implicit val params = Gen.Params(2, org.scalacheck.util.StdRand)	
+}

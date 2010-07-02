@@ -44,6 +44,7 @@ trait SampleExpressions {
   val ints: VariableExpression[List[Int]] = new VariableExpression(new Constant("ints", List(1)))
   val i: VariableExpression[Int] = new VariableExpression(new Constant("i", 1))
   
+  implicit def variableExpression[T](v: Variable[T]): VariableExpression[T] = new VariableExpression(v)
   implicit def methodExpression(m: String): MethodExpression = MethodExpression(method(m))
   def method(m: String) = new ScalaMethod {
 	val method = getClass.getMethods().apply(0)

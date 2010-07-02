@@ -8,8 +8,9 @@ import org.scalacheck.util._
 class CombineSpec extends Specification with ScalaMethodsFactory with ExpressionsCombiner with SampleLists with SampleVariables {
   "the combine method" should {
     "combine an expression taking a 2 variables and 1 variable in 2 expressions: a, exp(a, a)" in {
+      noDetailedDiffs()
       combine(plusPlus, List(xs)).expressions.sortBy(_.toString.size).map(_.show).toString must_== 
-    	  "List(xs, ++(xs, xs), ++(++(xs, xs), ++(xs, xs)))"
+    	  "List(xs, ++(xs, xs), ++(++(xs, xs), xs), ++(xs, ++(xs, xs)), ++(++(xs, xs), ++(xs, xs)))"
     }
     "combine 1 method and 2 variables" in {
       combineDepth(1)
@@ -39,6 +40,10 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
     "a, b, exp(a, b), exp(b, a), exp(a, a), exp(b, a)" in {
       combineDepth(1)
       combine(plusPlus, List(xs, ys)).expressions must have size(6)
+    }
+    "combine an expression taking a 2 variables and 1 variables with depth 2" in {
+      combineDepth(2)
+      combine(plusPlus, List(xs, ys)).expressions must have size(42)
     }
   }
   case class ValuedExpressionReturning(t: String) extends ValuedExpression {

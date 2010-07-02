@@ -9,21 +9,28 @@ import org.specs.log._
 trait ExpressionsCombiner extends Log {
   val combine = (combineMethods _).tupled
   val combineDepth = Property(2)
+  
   protected def combineMethods(methods: ScalaMethods, variables: List[Variable[_]]): CombinedExpressions = {
+    debug("methods to combine " + methods.methods)
     val combined = combineMethodList(methods.methods, variables)
-    debug("combined " + combined)
+    debug("combined expressions are " + combined.expressions.mkString(", "))
     combined
   }
   protected def combineMethodList(methods: List[ScalaMethod], variables: List[Variable[_]]): CombinedExpressions = {
     combineExpressions(methods.map(MethodExpression(_)), variables.map(VariableExpression(_)), variables)
   }
   private def combineExpressions(methods: List[ApplicableExpression], parameters: List[ValuedExpression], variables: List[Variable[_]]): CombinedExpressions = {
-	def applyParams(params: List[ValuedExpression]) = methods.flatMap(_.apply(params))
-	val zeroParamsMethods = applyParams(Nil) 
-	val combined = (methods.flatMap(_.apply(zeroParamsMethods ::: parameters)) /: (1 until combineDepth())) { (res, cur) =>
-  	  res ::: applyParams(res)
+	def applyParams(params: List[ValuedExpression]) = {
+	  val distinctParams = params.distinct
+	  val r = methods.flatMap(_.apply(distinctParams))
+	  debug("trying to apply "+distinctParams+" to "+methods+" = "+r)
+	  r
 	}
-    CombinedExpressions(combined ::: parameters, variables)
+	val zeroParamsMethods = applyParams(Nil) 
+	val combined = (applyParams(zeroParamsMethods ::: parameters) /: (1 until combineDepth())) { (res, cur) =>
+  	  res ::: applyParams(res ::: parameters)
+	}
+    CombinedExpressions((combined ::: parameters).distinct, variables)
   }
 }
 case class CombinedExpressions(expressions: List[ValuedExpression], variables: List[Variable[_]])

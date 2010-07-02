@@ -18,8 +18,9 @@ trait TypesMatcher {
 	  val c1 = load(t1, "couldn't find class " +  t1 + " to check if it can be assigned to " + t2)
 	  c2.map(k2 => c1.map(k2.isAssignableFrom(_))).flatMap(c => c).getOrElse(false)
 	}
-	t1 == t2 ||
+	t1.toLowerCase == t2.toLowerCase ||
 	t1.takeWhile(_ != '[') == t2.takeWhile(_ != '[') ||
+	t1 == "java.lang.Object" || t2 == "java.lang.Object" ||
 	c1InstanceOfc2
   }
 }

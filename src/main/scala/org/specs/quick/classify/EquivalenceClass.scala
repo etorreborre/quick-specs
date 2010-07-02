@@ -37,10 +37,10 @@ private[classify] case class EquivalenceClass(expressions: List[ValuedExpression
   }
   private def makeEqualities(exp: List[ValuedExpression]): List[Equality[ValuedExpression]] = exp.sortBy(_.toString.size) match {
 	case Nil => Nil
-	case (e @ VariableExpression(_)) :: Nil => List(Equality(e, e))
-	case e :: Nil => Nil
+	case e :: Nil => List(Equality(e, e))
 	case e :: other :: Nil if (e != other) => List(Equality(e, other))
 	case e :: other :: others if (e != other) => Equality(e, other) :: makeEqualities(e :: others)
 	case _ => Nil
-  } 
+  }
+  override def toString = "Expressions: "+expressions+" Variables: "+variables+result.map(" Result: "+_).getOrElse("")
 }

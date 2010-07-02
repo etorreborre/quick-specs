@@ -57,4 +57,8 @@ object ScalaMethods extends Classes {
 trait ScalaMethodsFactory {
   implicit def toMethods(a: AnyRef) = ScalaMethods.create(a)
   implicit def toScalaMethods(m: ScalaMethod) = new ScalaMethods(m.declaringClass, List(m))
+  import org.scalacheck._
+  def variable [A](name: String)(implicit m: ClassManifest[A], arb: Arbitrary[A], params: Gen.Params) = new ArbitraryVariable(name)(m, arb, params)
+  def constant[A](name: String, v: A)(implicit m: ClassManifest[A]) = new Constant(name, v)(m)
+
 }
