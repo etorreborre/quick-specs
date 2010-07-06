@@ -19,7 +19,7 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
       info("    adding "+equality)
       initialize(equality)
 	  recomputeCongruence()
-	  debug("after adding "+toString)
+	  debug("after adding\n"+toString)
 	  assert(isCongruent(equality))
 	}
   }
@@ -61,7 +61,7 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
 	    register(a, b)
 	}
 	def register(elements: Curried*) = elements foreach { v => 
-	  representative += v -> v
+	  if (!representative.get(v).isDefined) representative += v -> v
 	  if (!classList(v).contains(v)) classList.put(v, v)
 	}
   }
@@ -110,8 +110,7 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
 	List("    useList " + useList,
          "    representative " + representative,
          "    classList " + classList,
-         "    lookup " + lookup,
-         "    pending " +pending).mkString("\n")
+         "    lookup " + lookup).mkString("\n")
 
   }
 }
