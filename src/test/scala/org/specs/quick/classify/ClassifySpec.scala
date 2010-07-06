@@ -16,6 +16,7 @@ class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier wit
 	 	  "[xs == xs]",
 	 	  "[xs == ++(nil(), xs)]",
 	 	  "[xs == ++(xs, nil())]",
+	 	  "[++(xs, xs) == ++(xs, xs)]",
      	  "[nil() == ++(nil(), nil())]").mkString("\n")
 	}  
 	"return equalities for tautologies" in {

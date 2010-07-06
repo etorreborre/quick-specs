@@ -20,32 +20,34 @@ private[prune] trait EqualityFlattener {
 	val flattened = curried.foldLeft(Nil:List[Equality[Curried]]) { (res: List[Equality[Curried]], cur: Equality[Curried]) =>
 	  flattenCurried(cur) ::: res
 	}
-	(original, flattened)
+	(original, flattened.distinct)
   }
-  def flattenEqualities(curried: Equality[Curried]*): List[Equality[Curried]] = flattenEqualitiesList(Nil, curried.toList)._2
+  def flattenEqualities(curried: Equality[Curried]*): List[Equality[Curried]] = 
+	  flattenEqualitiesList(Nil, curried.toList)._2
   def flattenCurried(curried: Equality[Curried]): List[Equality[Curried]] = {
 	curried match {
    	  case Equality(Curry(a), Curry(b)) if (a == b) => List()
    	  case Equality(Curry(a), Curry(b)) if (a != b) => List(curried)
 
-   	  case Equality(app @ Apply(ca @ Curry(a), cb @ Curry(b)), Curry(c)) => {
-   		val ab = newCurry(Curry(a.toString+b.toString))
-   		List(Equality(ab, app), Equality(ab, Curry(c)))
+   	  case Equality(ab @ Apply(a, b), Curry(c)) => {
+	    val flattenA = flattenCurried(Equality(a, newCurry(a)))
+	    val flattenB = flattenCurried(Equality(b, newCurry(b)))
+	    val flattenAB = List(Equality(Apply(newCurry(a), newCurry(b)), newCurry(ab)))
+	    val flattenABC = List(Equality(newCurry(ab), Curry(c)))
+	    flattenABC ::: flattenAB  ::: flattenA ::: flattenB  
    	  }
-	  case Equality(Curry(c), app @ Apply(ca @ Curry(a), cb @ Curry(b))) => {
-   		val ab = newCurry(Curry(a.toString+b.toString))
-   		List(Equality(ab, app), Equality(ab, Curry(c)))
-	  }
+   	  case Equality(Curry(c), ab @ Apply(a, b)) => flattenCurried(Equality(ab, Curry(c)))
 	  
-	  case Equality(Apply(a, b), c) => {
+	  case Equality(ab @ Apply(a, b), cd @ Apply(c, d)) => {
 	    val flattenA = flattenCurried(Equality(a, newCurry(a)))
 	    val flattenB = flattenCurried(Equality(b, newCurry(b)))
 	    val flattenC = flattenCurried(Equality(c, newCurry(c)))
-	    val flattenAB = flattenCurried(Equality(Apply(newCurry(a), newCurry(b)), newCurry(c)))
-	    flattenAB ::: flattenC ::: flattenA  ::: flattenB
+	    val flattenD = flattenCurried(Equality(c, newCurry(c)))
+	    val flattenAB = flattenCurried(Equality(newCurry(ab), Apply(newCurry(a), newCurry(b))))
+	    val flattenCD = flattenCurried(Equality(newCurry(cd), Apply(newCurry(c), newCurry(d))))
+	    val flattenABCD = flattenCurried(Equality(newCurry(ab), newCurry(cd)))
+	    flattenABCD ::: flattenAB ::: flattenCD ::: flattenA  ::: flattenB ::: flattenC ::: flattenD
 	  }
-	  case Equality(c, Apply(a, b)) => flattenCurried(Equality(Apply(a, b), c))
-	  
 	  case _ => println("Not in a curried form " + curried.a.show + " and " + curried.b.show); Nil 
     }
   }
@@ -53,7 +55,7 @@ private[prune] trait EqualityFlattener {
 	a match {
 	  case Curry(u: Curried) => Curry(newId(u))
 	  case Curry(other) => Curry(other)
-	  case Apply(u, v) => newCurry(Curry(u.value+v.value))
+	  case Apply(u, v) => Curry(newCurry(u).value+newCurry(v).value)
 	  case other => Curry(newId(a))
 	}
   }

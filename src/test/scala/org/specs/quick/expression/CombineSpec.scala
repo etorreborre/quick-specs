@@ -43,7 +43,7 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
     }
     "combine an expression taking a 2 variables and 1 variables with depth 2" in {
       combineDepth(2)
-      combine(plusPlus, List(xs, ys)).expressions must have size(42)
+      combine(plusPlus, List(xs, ys)).expressions must have size(38)
     }
   }
   case class ValuedExpressionReturning(t: String) extends ValuedExpression {

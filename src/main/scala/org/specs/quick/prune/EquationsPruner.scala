@@ -15,7 +15,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
     val congruence = new CongruenceClass {
 	  def println(m: Any) = outer.println(m)
 	  def printf(format: String, args: Any*) = outer.printf(format, args)
-	//  level = outer.level
+	  level = outer.level
     }
 	val universe = equalities.foldLeft(Nil:List[ValuedExpression]) { (res, cur) => 
 	  val Equality(a, b) = cur
@@ -24,34 +24,26 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	debug("The equalities are "+equalities.mkString("\n"))
 	debug("The universe is "+universe)
 	val result = new scala.collection.mutable.ListBuffer[Equality[ValuedExpression]]
-	equalities.sortBy(_.toString.size).foreach { cur =>
+	equalities.sortBy(e => e)(equalityOrdering).foreach { cur =>
 	  if (congruence.isCongruent(cur)) {
 	 	debug(cur + " is congruent so is not added to the congruence structure")
 	  }
 	  else {
 	 	debug(cur + " IS A NEW EQUATION!")
 	  	congruence.add(cur)
-	  	result += cur
-    	val Equality(a: ValuedExpression, b: ValuedExpression) = cur
+	  	if (!cur.isTautology) result += cur
+
+	  	val Equality(a: ValuedExpression, b: ValuedExpression) = cur
 	 	debug("The subsitutes for "+cur+" are "+substitute(a, b, universe))
 	  	substitute(a, b, universe).foreach { sub =>
 	  	  val Equality(u, v) = sub
 	  	  if (universe.contains(u) || universe.contains(v)) {
-	  	 	if (congruence.isCongruent(sub))
-   	 	      debug(sub+" is already congruent")
-   	 	    else {
-   	 	      debug("adding the substitute "+sub+" to the congruence relationship")
-	  	 	  congruence.add(sub)
-	  	 	}
-	  	 	if (variablesNumber(sub) > variablesNumber(cur)) {
-  	 	      result -= cur
-  	 	 	  result += sub
-  	 	 	  debug("removing "+cur+" and adding "+"sub = "+result)
-    	 	} else if (variablesNumber(sub) < variablesNumber(cur) && result.contains(sub)) {
+	  	 	congruence.add(sub)
+	  	 	if (result.contains(sub)) {
     	 	  result -= sub
-    	 	  debug("removing sub = "+result)
+    	 	  debug("removing "+sub+" -> "+result)
     	 	}
-	  	  } else debug(u+" and "+v+" don't belong to the universe")
+          } else debug(u+" and "+v+" don't belong to the universe")
 	  	}
 	  }
 	}
@@ -62,12 +54,11 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	val bindings: List[Bindings] = allBindings(a, terms).distinct
 	bindings.foldLeft(Nil:List[Equality[ValuedExpression]]) { (res, cur) =>
 	  val (subA, subB) = (a.substitute(cur.map), b.substitute(cur.map))
-	  if (a != subA || b != subB)
+	  if ((a, b) != (subA, subB) && (a, b) != (subB, subA)) 
 	    Equality(subA, subB) :: res
 	  else 
 	 	res
-		  
-	} 
+	}
   } 
   
   private[prune] def allBindings(a: ValuedExpression, terms: List[ValuedExpression]): List[Bindings] = {
@@ -82,7 +73,6 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
   
   private[prune] def possibleValues(a: ValuedExpression, terms: List[ValuedExpression]) = {
     a.variables.map { variable =>
-      debug("variables for expression a "+variable)
       terms.filter(t => typesMatch(t.getType, variable.getType)) 
     }
   }
@@ -95,4 +85,25 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	def add(variable: VariableExpression[_], value: ValuedExpression) = Bindings(exp, map + (variable -> value))
 	override def toString = "\nexpression:\n" + exp.toString + "\n" + map.mkString("\n")
   }
+  
 }
+  object equalityOrdering extends Ordering[Equality[ValuedExpression]] {
+	def variables(e: Equality[ValuedExpression]) = e match {
+	  case Equality(a, b) => (a.variables ::: b.variables).sortBy(_.toString)
+	}
+	def compare(x: Equality[ValuedExpression], y: Equality[ValuedExpression]) = {
+	  if (size(x) > size(y)) 1
+	  else if (size(x) == size(y)) variables(x).toString.compareTo(variables(y).toString)
+	  else -1
+	}
+	def size(x: Equality[ValuedExpression]): Int = {
+	  val Equality(a, b) = x
+	  size(a) + size(b)
+	}
+	def size(x: ValuedExpression): Int = {
+	  x.variables.foldLeft(x.toString) { (res, cur) => 
+	  	res.replace(cur.name, "v")
+	  }.size
+	}
+  }
+

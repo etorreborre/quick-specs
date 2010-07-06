@@ -10,6 +10,18 @@ class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for
     def printf(format: String, args: Any*) = outer.printf(format, args)
   }
   "it" should {
+//	"accept a simple equality" in {
+//	  noDetailedDiffs
+//	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
+//	  congruence.add(eq1)
+//	  congruence.add(eq1)
+//	  congruence.toString.replace("    ", "") must_== 
+//	 """useList Map(Curry(nil) -> [[Curry(+xsnil) == .(Curry(+xs), Curry(nil))]], Curry(+) -> [[Curry(+xs) == .(Curry(+), Curry(xs))]], Curry(+xs) -> [[Curry(+xsnil) == .(Curry(+xs), Curry(nil))]], Curry(xs) -> [[Curry(+xs) == .(Curry(+), Curry(xs))]])
+//        |representative Map(Curry(nil) -> Curry(nil), Curry(+) -> Curry(+), Curry(xs) -> Curry(xs), Curry(+xs) -> Curry(+xs), Curry(+xsnil) -> Curry(xs))
+//        |classList Map(Curry(nil) -> [Curry(nil)], Curry(+) -> [Curry(+)], Curry(+xs) -> [Curry(+xs)], Curry(xs) -> [Curry(xs), Curry(+xsnil)], Curry(+xsnil) -> [Curry(+xsnil)])
+//        |lookup Map((Curry(+xs),Curry(nil)) -> Curry(+xsnil), (Curry(+),Curry(xs)) -> Curry(+xs))
+//        |pending Stack()""".stripMargin
+//	}
 	"accept equalities with an application and check congruence for a symetric equality" in {
 	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
 	  val eq2: Equality[Expression] = Equality(xs, apply("+", xs, nil))

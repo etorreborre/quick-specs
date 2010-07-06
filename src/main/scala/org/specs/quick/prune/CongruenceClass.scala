@@ -13,16 +13,23 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
   private val pending = new Stack[(Curried, Curried)]
   
   def add(equality: Equality[Expression]) {
-	info("    adding "+equality)
-	initialize(equality)
-	recomputeCongruence()
-	assert(isCongruent(equality))
+	if (equality.isTautology) {
+  	  info("    not adding the tautology"+equality)
+	} else {
+      info("    adding "+equality)
+      initialize(equality)
+	  recomputeCongruence()
+	  debug("after adding "+toString)
+	  assert(isCongruent(equality))
+	}
   }
   def isCongruent(equality: Equality[Expression]): Boolean = {
-	debug("    testing the congruence of "+equality)
-	debug(toString)
 	val flattened:List[Equality[Curried]] = flattenCurried(equality.map(_.curryfy))
     val congruent = flattened.forall { 
+	  case e @ Equality(c @ Curry(_), Apply(a, b)) => 
+	    debug("lookup for "+e+" "+(representative.get(c), lookup.get((a, b)).map(representative(_))))
+	    representative.get(c).isDefined && 
+	    lookup.get((a, b)).map(representative(_)) == representative.get(c)
 	  case e @ Equality(Apply(a, b), c @ Curry(_)) => 
 	    debug("lookup for "+e+" "+(representative.get(c), lookup.get((a, b)).map(representative(_))))
 	    representative.get(c).isDefined && 
@@ -37,8 +44,13 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
   }
   
   private def initialize(equality: Equality[Expression]) {
+	debug("initializing with " + flattenCurried(equality.map(_.curryfy)).mkString("\n"))
 	flattenCurried(equality.map(_.curryfy)) foreach  {
-		
+	  case e @ Equality(c: Curried, app @ Apply(a: Curried, b: Curried)) => 
+	    useList.put(a, e)
+	    useList.put(b, e)
+	    register(a, b, c)
+	    lookup += (a, b) -> c
 	  case e @ Equality(app @ Apply(a: Curried, b: Curried), c: Curried) => 
 	    useList.put(a, e)
 	    useList.put(b, e)
@@ -50,7 +62,7 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
 	}
 	def register(elements: Curried*) = elements foreach { v => 
 	  representative += v -> v
-	  classList.put(v, v)
+	  if (!classList(v).contains(v)) classList.put(v, v)
 	}
   }
   private def recomputeCongruence() {
@@ -63,15 +75,25 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
     }	  
   }
   private def update(ra: Curried, rb: Curried) {
-	debug("    classList(ra) "+classList(ra))
-	debug("    classList(rb) "+classList(rb))
+	debug("    classList "+ra+" "+classList(ra))
+	debug("    classList "+rb+" "+classList(rb))
 	if (classList(ra).size <= classList(rb).size) {
 	  for (c <- classList(ra)) {
 	    representative(c) = rb
-	    classList.put(rb, c)
+	    if (!classList.apply(rb).contains(c)) classList.put(rb, c)
 	  }
 	  for (equality @ 
 	       Equality(Apply(c: Curried, d: Curried), e: Curried) <- useList(ra)) {
+	    val (rc, rd, re) = (representative(c), representative(d), representative(e))
+	    lookup.get(rc, rd) map { f => 
+	      val rf = representative(f)
+	      if (rf != re) pending.push((re, rf))
+	    }	
+	    lookup((rc, rd)) = re
+	    useList.put(rb, equality)
+	  }
+	  for (equality @ 
+	       Equality(e: Curried, Apply(c: Curried, d: Curried)) <- useList(ra)) {
 	    val (rc, rd, re) = (representative(c), representative(d), representative(e))
 	    lookup.get(rc, rd) map { f => 
 	      val rf = representative(f)
