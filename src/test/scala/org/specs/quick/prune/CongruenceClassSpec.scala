@@ -28,6 +28,8 @@ class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for
 	    congruence.representative must havePair(Curry("ab") -> Curry("c")) 
 	  }
 	}
+  }
+  "a congruence relationship" should {
 	"accept equalities with an application and check congruence for a symetric equality" in {
 	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
 	  val eq2: Equality[Expression] = Equality(xs, apply("+", xs, nil))
