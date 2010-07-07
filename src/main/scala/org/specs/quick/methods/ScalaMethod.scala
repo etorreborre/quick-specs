@@ -20,13 +20,18 @@ trait ScalaMethod extends Tagged {
   val method: Method
   lazy val declaringClass: Class[_] = method.getDeclaringClass
   lazy val returnType: String = method.getReturnType.getName
-  lazy val parameterTypes: List[String] = method.getParameterTypes.map(_.getName).toList
+  private var methodParameterTypes: List[String] = method.getParameterTypes.map(_.getName).toList
+  def parameterTypes: List[String] = methodParameterTypes
+  def parameterTypes_=(types: List[String]) = {
+	methodParameterTypes = types
+	this
+  }
   lazy val methodName = NameTransformer.decode(method.getName)
 
   def apply(values: Any*): Any = apply(values.toList)
   def apply(values: List[Any]): Any
   override def toString = methodName
-
+  
   tag(methodName)
 }
 

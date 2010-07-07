@@ -65,6 +65,18 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
       }
     }
   }
+  "The method name and parameter types can be extracted from a String with bracket" >> {
+	import ScalaMethods._
+	"when no type is specified: method" >> {
+	  extractNameAndTypes("method") must_== ("method", Nil)
+	}
+	"when one type is specified: method[Int]" >> {
+	  extractNameAndTypes("method[Int]") must_== ("method", List("Int"))
+	}
+	"when 2 types are specified: method[Int, String]" >> {
+	  extractNameAndTypes("method[Int, String]") must_== ("method", List("Int", "String"))
+	}
+  } 
 }
 trait InstanceMethods extends GenerationParams { 
   implicit val arbInstanceMethods: Arbitrary[InstanceMethod]= Arbitrary(InstanceMethod(new Object, classOf[Object].getDeclaredMethods().apply(0)))
