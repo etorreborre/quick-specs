@@ -20,7 +20,6 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar w
     }
     "return a list of equations for a case with 2 variables and two operations" in {
       combineDepth(1)
-      level = Debug
       quick(Lists.accept("\\+\\+", "nil"), xs, ys).split("\n") must have size(2)
       quick(Lists.accept("\\+\\+", "nil"), xs, ys).toString must include("[xs == ++(nil(), xs)]") and include("[xs == ++(xs, nil())]") 
     }

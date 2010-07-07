@@ -7,6 +7,7 @@ import CongruenceClosure._
 import org.specs.quick.Functions._
 import org.specs.quick.collection.CartesianProduct._
 import org.specs.log._
+import org.specs.quick.prune.CongruenceClass._
 
 trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer =>
   val prune = pruneEquations _

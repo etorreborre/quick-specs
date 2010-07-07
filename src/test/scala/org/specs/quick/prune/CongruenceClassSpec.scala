@@ -3,25 +3,31 @@ import org.specs.SpecificationWithJUnit
 import org.specs.quick.equality._
 import org.specs.quick.methods._
 import org.specs.quick.expression._
+import org.specs.quick.prune.CongruenceClass._
 
 class CongruenceClassSpec extends SpecificationWithJUnit("A congruence class for equalities") with SampleExpressions with ExpressionCurrier { outer =>
   val congruence = new CongruenceClass {
     def println(m: Any) = outer.println(m)
     def printf(format: String, args: Any*) = outer.printf(format, args)
   }
-  "it" should {
-//	"accept a simple equality" in {
-//	  noDetailedDiffs
-//	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
-//	  congruence.add(eq1)
-//	  congruence.add(eq1)
-//	  congruence.toString.replace("    ", "") must_== 
-//	 """useList Map(Curry(nil) -> [[Curry(+xsnil) == .(Curry(+xs), Curry(nil))]], Curry(+) -> [[Curry(+xs) == .(Curry(+), Curry(xs))]], Curry(+xs) -> [[Curry(+xsnil) == .(Curry(+xs), Curry(nil))]], Curry(xs) -> [[Curry(+xs) == .(Curry(+), Curry(xs))]])
-//        |representative Map(Curry(nil) -> Curry(nil), Curry(+) -> Curry(+), Curry(xs) -> Curry(xs), Curry(+xs) -> Curry(+xs), Curry(+xsnil) -> Curry(xs))
-//        |classList Map(Curry(nil) -> [Curry(nil)], Curry(+) -> [Curry(+)], Curry(+xs) -> [Curry(+xs)], Curry(xs) -> [Curry(xs), Curry(+xsnil)], Curry(+xsnil) -> [Curry(+xsnil)])
-//        |lookup Map((Curry(+xs),Curry(nil)) -> Curry(+xsnil), (Curry(+),Curry(xs)) -> Curry(+xs))
-//        |pending Stack()""".stripMargin
-//	}
+  "adding constants to the congruence relation" should {
+	"extends the representative map" in {
+	  "with a simple equality" >> {
+	    congruence.add(Equality(Curry("a"), Curry("b")))
+	    congruence.representative must havePair(Curry("a") -> Curry("b"))
+	  }
+	  "with 2 transitive equalities" >> {
+	    congruence.add(Equality(Curry("a"), Curry("b")))
+	    congruence.add(Equality(Curry("b"), Curry("c")))
+	    congruence.representative must havePair(Curry("a") -> Curry("b")) and 
+	                                   havePair(Curry("b") -> Curry("b")) and
+	                                   havePair(Curry("c") -> Curry("b"))
+	  }
+	  "with an application" >> {
+	    congruence.add(Equality(Apply(Curry("a"), Curry("b")), Curry("c")))
+	    congruence.representative must havePair(Curry("ab") -> Curry("c")) 
+	  }
+	}
 	"accept equalities with an application and check congruence for a symetric equality" in {
 	  val eq1: Equality[Expression] = Equality(apply("+", xs, nil), xs)
 	  val eq2: Equality[Expression] = Equality(xs, apply("+", xs, nil))

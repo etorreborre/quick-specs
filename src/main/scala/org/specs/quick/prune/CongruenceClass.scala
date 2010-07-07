@@ -4,15 +4,16 @@ import org.specs.quick.expression._
 import org.specs.collection.ListMultiMap
 import scala.collection.mutable._
 import org.specs.log._
-
-abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener with Log {
+abstract class CongruenceClass extends EqualityFlattener with Log {
   private val useList = new ListMultiMap[Curried, Equality[_]]
-  private val representative = new HashMap[Curried, Curried]
+  private[prune] val representative = new HashMap[Curried, Curried]
   private val classList = new ListMultiMap[Curried, Curried]
   private val lookup = new HashMap[(Curried, Curried), Curried]
   private val pending = new Stack[(Curried, Curried)]
-  
-  def add(equality: Equality[Expression]) {
+  def add[T](equality: T)(implicit conversion: T => Equality[Curried]) { 
+	add(conversion(equality)) 
+  }
+  def add(equality: Equality[Curried]) {
 	if (equality.isTautology) {
   	  info("    not adding the tautology"+equality)
 	} else {
@@ -23,8 +24,9 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
 	  assert(isCongruent(equality))
 	}
   }
-  def isCongruent(equality: Equality[Expression]): Boolean = {
-	val flattened:List[Equality[Curried]] = flattenCurried(equality.map(_.curryfy))
+  def isCongruent[T](equality: T)(implicit conversion: T => Equality[Curried]): Boolean = isCongruent(conversion(equality)) 
+  def isCongruent(equality: Equality[Curried]): Boolean = {
+	val flattened:List[Equality[Curried]] = flattenCurried(equality)
     val congruent = flattened.forall { 
 	  case e @ Equality(c @ Curry(_), Apply(a, b)) => 
 	    debug("lookup for "+e+" "+(representative.get(c), lookup.get((a, b)).map(representative(_))))
@@ -43,9 +45,9 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
 	congruent
   }
   
-  private def initialize(equality: Equality[Expression]) {
-	debug("initializing with " + flattenCurried(equality.map(_.curryfy)).mkString("\n"))
-	flattenCurried(equality.map(_.curryfy)) foreach  {
+  private def initialize(equality: Equality[Curried]) {
+	debug("initializing with " + flattenCurried(equality).mkString("\n"))
+	flattenCurried(equality) foreach  {
 	  case e @ Equality(c: Curried, app @ Apply(a: Curried, b: Curried)) => 
 	    useList.put(a, e)
 	    useList.put(b, e)
@@ -113,4 +115,7 @@ abstract class CongruenceClass extends ExpressionCurrier with EqualityFlattener 
          "    lookup " + lookup).mkString("\n")
 
   }
+}
+object CongruenceClass extends ExpressionCurrier {
+  implicit def curryfyExpressions(equality: Equality[Expression]): Equality[Curried] = equality.map(_.curryfy)
 }
