@@ -14,20 +14,20 @@ class EquationsPrunerSpec extends SpecificationWithJUnit with EquationsPruner wi
   }
   "pruning equations must not remove d + e = f if a + b = c is already there" in {
 	prune(List(Equality(apply("+", a, b), c), Equality(apply("+", d, e), f))).mkString must_== 
-		"[+(a, b) == c][+(d, e) == f]" 
+		"[a.+(b) == c][d.+(e) == f]" 
   }
   "pruning equations a + b = c, c = a + b" in {
-	prune(List(Equality(apply("+", xs, nil), xs), Equality(xs, apply("+", xs, nil)))).mkString must_== "[+(xs, nil) == xs]" 
+	prune(List(Equality(apply("+", xs, nil), xs), Equality(xs, apply("+", xs, nil)))).mkString must_== "[xs.+(nil) == xs]" 
   }
   "pruning equations where there is a substitution" in {
-	prune(List(Equality(apply("+", nil, nil), nil), Equality(apply("+", xs, nil), xs))).mkString must_== "[+(xs, nil) == xs]" 
+	prune(List(Equality(apply("+", nil, nil), nil), Equality(apply("+", xs, nil), xs))).mkString must_== "[xs.+(nil) == xs]" 
   }
   "pruning equations where there is a substitution of a variable" in {
-	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ys, nil), ys))).mkString must_== "[+(xs, nil) == xs]" 
+	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ys, nil), ys))).mkString must_== "[xs.+(nil) == xs]" 
   }
   "not pruning equations where there is not a substitution of a variable" in {
 	prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nilInts), ints))).mkString must_== 
-		"[+(xs, nil) == xs][+(ints, nilInts) == ints]" 
+		"[xs.+(nil) == xs][ints.+(nilInts) == ints]" 
   }
   "the list of all bindings for an expression must be the cartesian product" +
   " of all possible values, using the types in a list of terms" in {
