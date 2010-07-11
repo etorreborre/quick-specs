@@ -21,7 +21,7 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
       toStringMethod.returnType must_== "java.lang.String"
     }
     "have parameters types which are the type of its instance and the parameter types of its java method" in {
-      equalsMethod.parameterTypes must_== List("Object", "java.lang.Object")
+      equalsMethod.parameterTypes must_== List("java.lang.Object", "java.lang.Object")
     }
     "have a toString method returning the method name" in {
       equalsMethod.toString must_== "equals"
