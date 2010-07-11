@@ -15,6 +15,7 @@ object Lists {
   override def toString = "Lists (" + hashCode + ")" 
 }
 trait SampleLists extends ScalaMethodsFactory with Tagged {
+  val listsName: ScalaMethod = Lists.find("toString").get
   val plusPlus: ScalaMethod = Lists.find("++").get
   val nilList: ScalaMethod = Lists.find("nil").get
   val plusPlusAndNil = Lists.accept("\\+\\+", "nil")

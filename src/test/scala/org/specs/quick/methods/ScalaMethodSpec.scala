@@ -4,7 +4,7 @@ import org.specs.util._
 import org.scalacheck._
 
 class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory with Sugar with DataTables {
-  val methodsForObject = ScalaMethods.create[Object]
+  val methodsForObject = ScalaMethods.create(new java.lang.Object)
   "A ScalaMethods object grouping several ScalaMethods" can {
     "be created from a scala object" in {
       object AScalaObject
@@ -20,34 +20,36 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
     "have a type which is the return type of its associated java method" in {
       toStringMethod.returnType must_== "java.lang.String"
     }
-    "have parameters types which are the parameter types of its java method" in {
-      equalsMethod.parameterTypes must_== List("java.lang.Object")
+    "have parameters types which are the type of its instance and the parameter types of its java method" in {
+      equalsMethod.parameterTypes must_== List("Object", "java.lang.Object")
     }
     "have a toString method returning the method name" in {
       equalsMethod.toString must_== "equals"
     }
     "have an apply method applying a list of values to the method" in {
-      case class Adder() {
+      class Adder {
+        def addNone = "hello"
         def addOne(o: String) = "hello " + o
         def add1(i: Int) = "hello " + i
       }
+      val adder = new Adder
       "if the ScalaMethods object has been created from a type, the values must provide an instance as the first value" >> {
-        val addOneMethod = ScalaMethods.create[Adder].get("addOne")
-        addOneMethod.apply(Adder(), "world") must_== "hello world"
+        val addNoneMethod = ScalaMethods.create(adder).get("addNone")
+        addNoneMethod.apply(adder) must_== "hello"
       }
-      "if the ScalaMethods object has been created from an instance, the values must provide only the parameters" >> {
-        val addOneMethod = ScalaMethods.create(new Adder).get("addOne")
-        addOneMethod.apply("world") must_== "hello world"
+      "if the ScalaMethods object has been created from a type, the values must provide an instance and other parameters" >> {
+        val addOneMethod = ScalaMethods.create(adder).get("addOne")
+        addOneMethod.apply(adder, "world") must_== "hello world"
       }
       "the passed values can be AnyVal too" >> {
-        val add1Method = ScalaMethods.create(new Adder).get("add1")
-        add1Method.apply(1) must_== "hello 1"
+        val add1Method = ScalaMethods.create(adder).get("add1")
+        add1Method.apply(adder, 1) must_== "hello 1"
       }
     }
   }
   "A ScalaMethods object" can {
     "be tagged so that only accepted methods are returned with the get method" in {
-      val methods = ScalaMethods.create[Object].accept("toString")
+      val methods = ScalaMethods.create(new Object).accept("toString")
       methods.methods must have(_.methodName == "toString")
       methods.methods must notHave(_.methodName == "equals")
     }
@@ -82,7 +84,7 @@ trait InstanceMethods extends GenerationParams {
   implicit val arbInstanceMethods: Arbitrary[InstanceMethod]= Arbitrary(InstanceMethod(new Object, classOf[Object].getDeclaredMethods().apply(0)))
 }
 trait ClassMethods extends GenerationParams {
-  implicit val arbClassMethods: Arbitrary[ClassMethod]= Arbitrary(ClassMethod(classOf[Object].getDeclaredMethods().apply(0)))
+  implicit val arbClassMethods: Arbitrary[ClassMethod]= Arbitrary(ClassMethod("java.lang.Object", classOf[Object].getDeclaredMethods().apply(0)))
 }
 trait AnyScalaMethods extends InstanceMethods with ClassMethods {
   implicit val anyScalaMethod: Arbitrary[ScalaMethod]= Arbitrary(Gen.oneOf(arbInstanceMethods.arbitrary, arbClassMethods.arbitrary))

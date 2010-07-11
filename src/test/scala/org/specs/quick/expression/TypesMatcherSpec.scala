@@ -7,6 +7,7 @@ class TypesMatcherSpec extends SpecificationWithJUnit with TypesMatcher with Dat
 	 "t1"      			| "t2"     				|
 	 "MyClass" 			! "MyClass" 			|
 	 "List[String]" 	! "List[Object]"		|
+	 "String"           ! "java.lang.String" 	|
 	 "java.lang.String" ! "java.lang.Object" 	|
 	 "Int" 				! "java.lang.Object"	| 	
 	 "int" 				! "Int"				 	|> { (t1, t2) =>

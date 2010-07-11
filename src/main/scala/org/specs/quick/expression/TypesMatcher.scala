@@ -20,6 +20,7 @@ trait TypesMatcher {
 	}
 	t1.toLowerCase == t2.toLowerCase ||
 	t1.takeWhile(_ != '[') == t2.takeWhile(_ != '[') ||
+	t1.replace("java.lang.", "") == t2.replace("java.lang.", "") ||
 	t1 == "java.lang.Object" || t2 == "java.lang.Object" ||
 	c1InstanceOfc2
   }
