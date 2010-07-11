@@ -16,7 +16,7 @@ case class ApplicationExpression(method: MethodExpression, parameters: List[Valu
       case e => e
     }
   }
-  override def show = method.show + parameters.map(_.show).mkString("(", ", ", ")")
+  override def show = parameters(0)+"."+method.show + parameters.drop(1).map(_.show).mkString("(", ", ", ")")
   def substitute(bindings: Map[Expression, ValuedExpression]) = {
 	 ApplicationExpression(method, parameters.map(_.substitute(bindings)))
   }

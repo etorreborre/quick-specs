@@ -19,6 +19,7 @@ trait SampleLists extends ScalaMethodsFactory with Tagged {
   val plusPlus: ScalaMethod = Lists.find("++").get
   val nilList: ScalaMethod = Lists.find("nil").get
   val plusPlusAndNil = Lists.accept("\\+\\+", "nil")
+  val lists = constant("lists", Lists)
 }
 trait SampleVariables {
   implicit val parameters: Gen.Params = Gen.Params(2, StdRand)
