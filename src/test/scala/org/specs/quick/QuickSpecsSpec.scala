@@ -9,19 +9,20 @@ class QuickSpecsSpec extends SpecificationWithJUnit with QuickSpecs with Sugar w
   "creating quick specs" should {
     "return a list of equations for the most simple case" in {
       combineDepth(1)
-      val equations = quick(Lists.accept("\\+\\+", "nil"), Lists, xs).split("\n")
+      val equations = quick(Lists.accept("\\+\\+", "nil"), lists, xs).split("\n")
       equations must have size(2)
     }
     "return a list of equations for a case with 2 variables and one operation" in {
       combineDepth(1)
-      quick(Lists.accept("\\+\\+\\+"), Lists, xs, ys) must_== List(
-        "[+++(xs, ys) == +++(ys, xs)]"
+      quick(Lists.accept("\\+\\+\\+"), lists, xs, ys) must_== List(
+        "[lists.+++(xs, ys) == lists.+++(ys, xs)]"
       ).mkString("\n")
     }
     "return a list of equations for a case with 2 variables and two operations" in {
       combineDepth(1)
-      quick(Lists.accept("\\+\\+", "nil"), Lists, xs, ys).split("\n") must have size(2)
-      quick(Lists.accept("\\+\\+", "nil"), Lists, xs, ys).toString must include("[xs == ++(nil(), xs)]") and include("[xs == ++(xs, nil())]") 
+      level = Debug
+      quick(Lists.accept("\\+\\+", "nil"), lists, xs, ys).split("\n").toList must have size(2)
+      quick(Lists.accept("\\+\\+", "nil"), lists, xs, ys).toString must include("[xs == lists.++(lists.nil(), xs)]") and include("[xs == lists.++(xs, lists.nil())]") 
     }
   }
 }
