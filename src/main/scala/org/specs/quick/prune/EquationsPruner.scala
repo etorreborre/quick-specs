@@ -1,5 +1,6 @@
 package org.specs.quick.prune
 import org.specs.quick.expression._
+import org.specs.util.TypesMatcher
 import org.specs.quick.equality._
 import EqualityFlattener._
 import ExpressionCurrier._

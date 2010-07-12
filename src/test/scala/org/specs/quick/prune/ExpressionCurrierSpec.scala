@@ -26,7 +26,6 @@ class ExpressionCurrierSpec extends SpecificationWithJUnit with ExpressionCurrie
     MethodExpression(m).curryfy must_== Curry("wait")
   }
   "A composed expression" should {
-    val m = ScalaMethods.create(new Object).methods(0)
     "be curried with just its name when it has no parameter" in {
       ApplicationExpression(MethodExpression(m), Nil).curryfy must_== Curry("wait")
     }

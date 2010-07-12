@@ -1,6 +1,7 @@
 package org.specs.quick.expression
 import org.specs.quick.methods._
 import org.specs.quick.collection.CartesianProduct._
+import org.specs.util.TypesMatcher
 
 /**
  * Expression for a ScalaMethod

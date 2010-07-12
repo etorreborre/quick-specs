@@ -22,7 +22,6 @@ class ListMultiMapSpec extends SpecificationWithJUnit {
 }
 import org.scalacheck._
 class ListMultiMapSpecs extends Specification with QuickSpecs with Sugar {
-  //level = Debug
   implicit val strings = Arbitrary.arbitrary[Array[String]]
   object ListMultiMapExample {
 	def put(m: ListMultiMap[Int, String], i: Int, s: String): ListMultiMap[Int, String] = { 
@@ -32,12 +31,10 @@ class ListMultiMapSpecs extends Specification with QuickSpecs with Sugar {
 	def get(m: ListMultiMap[Int, String], i: Int): List[String] = m.apply(i)
   }
   "specs for the put method" in {
-	level = Debug
-//    quick(ListMultiMapExample.accept("put", "get"), 
-//    		constant("map", new ListMultiMap[Int, String]), variable[Int]("i"), variable[String]("s")).pp.isExpectation
-    quick(new ListMultiMap[Int, String].select("put[Int, java.lang.String]", "apply[Int]"), 
+//	level = Debug
+    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]"), 
     		constant("map", new ListMultiMap[Int, String]), 
     		variable[Int]("i"), 
-    		variable[String]("s")).pp.isExpectation
+      		variable[String]("s")).pp.isExpectation
   }
 }

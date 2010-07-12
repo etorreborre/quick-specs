@@ -1,11 +1,18 @@
-package org.specs.quick.expression
+package org.specs.util
 
 trait TypesMatcher {
   private val loader = getClass.getClassLoader
   /**
+   * @return true if t2 is assignable with t1 for all t2, t1
+   */
+  def typesMatch(t1: List[String], t2: List[String]): Boolean = {
+	t1.size == t2.size &&
+	(t1 zip t2).forall { case (a, b) => typesMatch(a, b) }
+  }
+  /**
    * @return true if t2 is assignable with t1
    */
-  def typesMatch(t1: String, t2: String) = {
+  def typesMatch(t1: String, t2: String): Boolean = {
 	def load(c: String, m: String): Option[Class[_]] = {
   	  try {
 	    Some(loader.loadClass(c))
