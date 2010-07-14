@@ -17,7 +17,7 @@ import org.specs.util.Property
  * The apply method can be used to pass parameter values and invoke the method
  */
 trait ScalaMethod extends Tagged {
-  val method: Method
+  protected val method: Method
   lazy val declaringClass: Class[_] = method.getDeclaringClass
   lazy val returnType: String = method.getReturnType.getName
   
@@ -30,8 +30,9 @@ trait ScalaMethod extends Tagged {
   
   lazy val methodName = NameTransformer.decode(method.getName)
 
-  def apply(values: Any*): Any = apply(values.toList)
-  def apply(values: List[Any]): Any
+  def apply(values: Any*): Any = applyValues(values.toSeq)
+  def apply(values: List[Any]): Any = applyValues(values)
+  def applyValues(values: Seq[Any]): Any
 
   override def toString = methodName
   tag(methodName)
@@ -42,7 +43,7 @@ trait ScalaMethod extends Tagged {
  *
  */
 case class InstanceMethod(instance: AnyRef, method: Method) extends ScalaMethod {
-  def apply(values: List[Any]): Any = {
+  def applyValues(values: Seq[Any]): Any = {
     if (values.isEmpty)
      method.invoke(instance) 
     else {
@@ -59,7 +60,7 @@ case class InstanceMethod(instance: AnyRef, method: Method) extends ScalaMethod 
  */
 case class ClassMethod(instanceType: String, method: Method) extends ScalaMethod {
   override def parameterTypes: List[String] = instanceType :: super.parameterTypes
-  def apply(values: List[Any]): Any = {
+  def applyValues(values: Seq[Any]): Any = {
     require (values.size >= 1)
     if (values.size == 1)
      method.invoke(values(0)) 

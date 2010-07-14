@@ -31,8 +31,12 @@ class ListMultiMapSpecs extends Specification with QuickSpecs with Sugar {
 	def get(m: ListMultiMap[Int, String], i: Int): List[String] = m.apply(i)
   }
   "specs for the put method" in {
+	object listFactory {
+	  def list[T](t: T) = List(t)
+	}
 //	level = Debug
-    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]"), 
+    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]") ++ 
+    	  listFactory.select("list[String]"), 
     		constant("map", new ListMultiMap[Int, String]), 
     		variable[Int]("i"), 
       		variable[String]("s")).pp.isExpectation

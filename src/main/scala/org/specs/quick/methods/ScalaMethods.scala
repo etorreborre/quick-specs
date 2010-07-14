@@ -5,17 +5,27 @@ import org.specs.specification.Tagged
 
 trait ScalaMethods {
   /** @return the list of accepted methods */
-  def methods: List[ScalaMethod]
+  def methods: Seq[ScalaMethod]
+  /** @return a ScalaMethods object, with the union of both method sets */
+  def union(other: ScalaMethods): ScalaMethods = ScalaMethodList(methods ++ other.methods)
+  /** @return a ScalaMethods object, with the union of both method sets */
+  def ++(other: ScalaMethods): ScalaMethods = union(other)
+}
+/**
+ * This class just holds a list of ScalaMethods
+ */
+case class ScalaMethodList(private val scalaMethods: Seq[ScalaMethod]) extends ScalaMethods {
+  def methods: Seq[ScalaMethod] = scalaMethods
 }
 /**
  * This class holds a list of methods, belonging to the same class, for which equations will be generated.
  * 
  * It is tagged so that some methods can be accepted or rejected from the set by their name
  */
-class ScalaClassMethods(declaringClass: Class[_], private val scalaMethods: List[ScalaMethod]) extends 
+class ScalaClassMethods(val declaringClass: Class[_], private val scalaMethods: List[ScalaMethod]) extends 
   Tagged with TypesMatcher with ScalaMethods {
   
-	import ScalaMethods._
+  import ScalaMethods._
   
   def getOwn: List[ScalaMethod] = {
     val selected = if (declaringClass.getSuperclass != null)

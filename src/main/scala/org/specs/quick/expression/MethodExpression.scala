@@ -15,11 +15,9 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression wi
   lazy val getType = method.returnType
   lazy val methodName = method.methodName
   override def show = method.methodName
-  private[this] def signature = methodName + method.parameterTypes.mkString("(", ",", ")") + ": " + getType
 
   def applyValues(values: List[Any]) = method.apply(values)
-  def apply(expressions: ValuedExpression*): List[ApplicationExpression] = apply(expressions:_*)
-  def apply(expressions: List[ValuedExpression]): List[ApplicationExpression] = {
+  def apply(expressions: ValuedExpression*): Seq[ApplicationExpression] =  {
     applicableParameters(expressions:_*) map (params => ApplicationExpression(this, params))
   }
 

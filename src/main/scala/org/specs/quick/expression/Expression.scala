@@ -27,7 +27,7 @@ trait Expression {
  *
  */
 trait ApplicableExpression extends Expression {
-  def apply(expressions: List[ValuedExpression]): List[ValuedExpression]
+  def apply(expressions: ValuedExpression*): Seq[ValuedExpression]
 }
 /**
  * A valued expression is an expression with a value:

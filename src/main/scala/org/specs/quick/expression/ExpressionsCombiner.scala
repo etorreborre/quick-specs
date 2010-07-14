@@ -16,21 +16,21 @@ trait ExpressionsCombiner extends Log {
     debug("combined expressions are " + combined.expressions.mkString(", "))
     combined
   }
-  protected def combineMethodList(methods: List[ScalaMethod], variables: List[Variable[_]]): CombinedExpressions = {
+  protected def combineMethodList(methods: Seq[ScalaMethod], variables: Seq[Variable[_]]): CombinedExpressions = {
     combineExpressions(methods.map(MethodExpression(_)), variables.map(VariableExpression(_)), variables)
   }
-  private def combineExpressions(methods: List[ApplicableExpression], parameters: List[ValuedExpression], variables: List[Variable[_]]): CombinedExpressions = {
-	def applyParams(params: List[ValuedExpression]) = {
+  private def combineExpressions(methods: Seq[ApplicableExpression], parameters: Seq[ValuedExpression], variables: Seq[Variable[_]]): CombinedExpressions = {
+	def applyParams(params: Seq[ValuedExpression]) = {
 	  val distinctParams = params.distinct
-	  val r = methods.flatMap(_.apply(distinctParams))
+	  val r = methods.flatMap(_.apply(distinctParams:_*))
 	  debug("trying to apply "+distinctParams+" to "+methods+" = "+r)
 	  r
 	}
 	val zeroParamsMethods = applyParams(Nil) 
-	val combined = (applyParams(zeroParamsMethods ::: parameters) /: (1 until combineDepth())) { (res, cur) =>
-  	  res ::: applyParams(res ::: parameters)
+	val combined = (applyParams(zeroParamsMethods ++ parameters) /: (1 until combineDepth())) { (res, cur) =>
+  	  res ++ applyParams(res ++ parameters)
 	}
-    CombinedExpressions((combined ::: parameters).distinct, variables)
+    CombinedExpressions((combined ++ parameters).distinct, variables)
   }
 }
-case class CombinedExpressions(expressions: List[ValuedExpression], variables: List[Variable[_]])
+case class CombinedExpressions(expressions: Seq[ValuedExpression], variables: Seq[Variable[_]])

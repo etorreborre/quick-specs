@@ -80,7 +80,7 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
   "applying expressions to a given expression" should {
     "return a list of expressions" in {
       val plusPlusExpression = MethodExpression(plusPlus)
-      plusPlusExpression.apply(List(listsExp, exp1)) must_== List(ApplicationExpression(plusPlusExpression, List(listsExp, exp1, exp1)))
+      plusPlusExpression.apply(listsExp, exp1) must_== List(ApplicationExpression(plusPlusExpression, List(listsExp, exp1, exp1)))
     }
   }
 }

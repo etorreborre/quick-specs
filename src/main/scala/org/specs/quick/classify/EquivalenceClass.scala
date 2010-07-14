@@ -7,10 +7,10 @@ import org.specs.quick.methods._
  * An equivalence class is a list of Valued Expressions which give the same result for a given set 
  * of variables
  */
-private[classify] case class EquivalenceClass(expressions: List[ValuedExpression], variables: List[Variable[_]], result: Option[Any]) {
+private[classify] case class EquivalenceClass(expressions: Seq[ValuedExpression], variables: Seq[Variable[_]], result: Option[Any]) {
 
   /** create an equivalence class with no result yet */
-  def this(expressions: List[ValuedExpression], variables: List[Variable[_]]) = this(expressions, variables, None)
+  def this(expressions: Seq[ValuedExpression], variables: Seq[Variable[_]]) = this(expressions, variables, None)
   /**
    *  recursively partition this equivalence class n times
    */
@@ -27,15 +27,15 @@ private[classify] case class EquivalenceClass(expressions: List[ValuedExpression
   /**
    * @return a map of expressions sorted by result
    */
-  private def evaluate: scala.collection.Map[Any, List[ValuedExpression]] = {
+  private def evaluate: scala.collection.Map[Any, Seq[ValuedExpression]] = {
 	variables.foreach(_.evaluate)
 	expressions.groupBy(_.value)
   }
 
-  def equalities: List[Equality[ValuedExpression]] = {
-	(variables.map(v => Equality(VariableExpression(v), VariableExpression(v))) ::: makeEqualities(expressions)).distinct
+  def equalities: Seq[Equality[ValuedExpression]] = {
+	(variables.map(v => Equality(VariableExpression(v), VariableExpression(v))) ++ makeEqualities(expressions.toList)).distinct
   }
-  private def makeEqualities(exp: List[ValuedExpression]): List[Equality[ValuedExpression]] = exp.sortBy(_.toString.size) match {
+  private def makeEqualities(exp: List[ValuedExpression]): List[Equality[ValuedExpression]] = exp.sortBy(_.toString.size).toList match {
 	case Nil => Nil
 	case e :: Nil => List(Equality(e, e))
 	case e :: other :: Nil if (e != other) => List(Equality(e, other))
