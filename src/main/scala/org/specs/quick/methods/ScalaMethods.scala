@@ -90,6 +90,7 @@ object ScalaMethods {
  * Transforms any object to a Methods object containing a list of ScalaMethods
  */
 trait ScalaMethodsFactory {
+  implicit def toScalaFunctions(methods: ScalaMethods): Seq[ScalaFunction] = methods.methods
   implicit def toMethods[T <: AnyRef](a: T)(implicit m: ClassManifest[T]) = ScalaMethods.create(a)
   implicit def toScalaClassMethods(m: ScalaMethod) = new ScalaClassMethods(m.declaringClass, List(m))
   import org.scalacheck._

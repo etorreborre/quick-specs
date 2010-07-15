@@ -1,13 +1,13 @@
 package org.specs.quick.collection
 
 /**
- * helper trait to create the cartesian product of several lists
+ * helper trait to create the cartesian product of several Seqs
  */
 trait CartesianProduct {
-  def cartesianProduct[T](list: List[List[T]]): List[List[T]] = {
-    list match {
+  def cartesianProduct[T](seq: Seq[Seq[T]]): Seq[Seq[T]] = {
+    seq.toList match {
       case Nil => List(List())
-      case xs :: xss => for (y <- xs; ys <- cartesianProduct(xss)) yield y :: ys
+      case xs :: xss => for (y <- xs; ys <- cartesianProduct(xss)) yield y +: ys  
     }
   }
 }

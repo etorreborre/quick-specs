@@ -9,7 +9,7 @@ class ClassifySpec extends SpecificationWithJUnit with ExpressionsClassifier wit
   override val partitionsNumber = 4
   combineDepth(2)
   
-  val combined = combine((plusPlusAndNil, List(lists, xs)))
+  val combined = combine((plusPlusAndNil.methods, List(lists, xs)))
   "classifying expressions" should {
 	"evaluate expressions to separate them to equalities" in {
 	  val expected = List(

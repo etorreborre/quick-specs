@@ -4,19 +4,19 @@ import org.specs.quick.collection.CartesianProduct._
 import org.specs.util.TypesMatcher
 
 /**
- * Expression for a ScalaMethod
+ * Expression for a ScalaFunction
  * 
  * It can be applied a list of ValuedExpressions and result in a list of ApplicationExpressions where all possible
  * applications of some parameter combinations with the method are created.
  * 
  * It can be evaluated by passing actual values that should correspond to the parameters expected types (@see ScalaMethod) 
  */
-case class MethodExpression(method: ScalaMethod) extends ApplicableExpression with TypesMatcher {
-  lazy val getType = method.returnType
-  lazy val methodName = method.methodName
-  override def show = method.methodName
+case class FunctionExpression(function: ScalaFunction) extends ApplicableExpression with TypesMatcher {
+  lazy val getType = function.returnType
+  lazy val methodName = function.name
+  override def show = function.name
 
-  def applyValues(values: List[Any]) = method.apply(values)
+  def applyValues(values: Seq[Any]) = function.apply(values)
   def apply(expressions: ValuedExpression*): Seq[ApplicationExpression] =  {
     applicableParameters(expressions:_*) map (params => ApplicationExpression(this, params))
   }
@@ -24,8 +24,8 @@ case class MethodExpression(method: ScalaMethod) extends ApplicableExpression wi
   /**
    * for each variable we keep a list of all the expressions that have the same type
    */
-  private[expression] def applicableParameters(expressions: ValuedExpression*): List[List[ValuedExpression]] = {
-	val applicable: List[List[ValuedExpression]] = method.parameterTypes.map {	t => 
+  private[expression] def applicableParameters(expressions: ValuedExpression*): Seq[Seq[ValuedExpression]] = {
+	val applicable: Seq[Seq[ValuedExpression]] = function.parameterTypes.map {	t => 
 	  expressions.toList.filter(e => typesMatch(e.getType, t))
     }
 	cartesianProduct(applicable).distinct

@@ -53,7 +53,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
   }
   
   private[prune] def substitute(a: ValuedExpression, b: ValuedExpression, terms: List[ValuedExpression]) = {
-	val bindings: List[Bindings] = allBindings(a, terms).distinct
+	val bindings: Seq[Bindings] = allBindings(a, terms).distinct
 	bindings.foldLeft(Nil:List[Equality[ValuedExpression]]) { (res, cur) =>
 	  val (subA, subB) = (a.substitute(cur.map), b.substitute(cur.map))
 	  if ((a, b) != (subA, subB) && (a, b) != (subB, subA)) 
@@ -63,7 +63,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	}
   } 
   
-  private[prune] def allBindings(a: ValuedExpression, terms: List[ValuedExpression]): List[Bindings] = {
+  private[prune] def allBindings(a: ValuedExpression, terms: Seq[ValuedExpression]): Seq[Bindings] = {
 	cartesianProduct(possibleValues(a, terms)).map { case params =>
 	  var bindings = Bindings(a, Map())
 	  a.variables.zip(params) foreach { case (variable, value) =>
@@ -73,7 +73,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 	}
   }
   
-  private[prune] def possibleValues(a: ValuedExpression, terms: List[ValuedExpression]) = {
+  private[prune] def possibleValues(a: ValuedExpression, terms: Seq[ValuedExpression]) = {
     a.variables.map { variable =>
       terms.filter(t => typesMatch(t.getType, variable.getType)) 
     }
@@ -91,7 +91,7 @@ trait EquationsPruner extends org.specs.Sugar with Log with TypesMatcher { outer
 }
   object equalityOrdering extends Ordering[Equality[ValuedExpression]] {
 	def variables(e: Equality[ValuedExpression]) = e match {
-	  case Equality(a, b) => (a.variables ::: b.variables).sortBy(_.toString)
+	  case Equality(a, b) => (a.variables ++ b.variables).sortBy(_.toString)
 	}
 	def compare(x: Equality[ValuedExpression], y: Equality[ValuedExpression]) = {
 	  if (size(x) > size(y)) 1

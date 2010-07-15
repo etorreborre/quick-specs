@@ -15,7 +15,7 @@ trait SampleExpressions {
   }
     
   def apply(m: String, o: ValuedExpression*) = {
-	ApplicationExpression(MethodExpression(method(m)), o.toList)
+	ApplicationExpression(FunctionExpression(method(m)), o.toList)
   }
   case class ValuedExpressionWithVariables(v: VariableExpression[_]*) extends ValuedExpression {
 	def value = ""
@@ -45,10 +45,10 @@ trait SampleExpressions {
   val i: VariableExpression[Int] = new VariableExpression(new Constant("i", 1))
   
   implicit def variableExpression[T](v: Variable[T]): VariableExpression[T] = new VariableExpression(v)
-  implicit def methodExpression(m: String): MethodExpression = MethodExpression(method(m))
+  implicit def functionIdExpression(m: String): FunctionExpression = FunctionExpression(method(m))
   def method(m: String) = new ScalaMethod {
 	val method = getClass.getMethods().apply(0)
-	def apply(values: List[Any]) = this
+	def apply(values: Any*) = this
     override lazy val declaringClass: Class[_] = getClass
     override lazy val returnType: String = ""
     override lazy val parameterTypes: List[String] = List("")

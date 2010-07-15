@@ -5,7 +5,7 @@ trait TypesMatcher {
   /**
    * @return true if t2 is assignable with t1 for all t2, t1
    */
-  def typesMatch(t1: List[String], t2: List[String]): Boolean = {
+  def typesMatch(t1: Seq[String], t2: Seq[String]): Boolean = {
 	t1.size == t2.size &&
 	(t1 zip t2).forall { case (a, b) => typesMatch(a, b) }
   }

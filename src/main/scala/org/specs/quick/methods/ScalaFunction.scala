@@ -6,8 +6,8 @@ package org.specs.quick.methods
  * accepting as strings
  */
 trait ScalaFunction {
+  def name: String
   def returnType: String
   def parameterTypes: Seq[String]
-  def apply(values: Any*): Any = apply(values.toList)
-  def apply(values: List[Any]): Any
+  def apply(values: Any*): Any
 }

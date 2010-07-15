@@ -16,16 +16,13 @@ import org.scalacheck._
  */
 trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with ExpressionsClassifier with EquationsPruner with Functions with DefaultParams { this: org.specs.Specification =>
   /**
-   * @return a list of equations for a given list of methods and variables
-   */
-  def quick(methods: ScalaMethods, variables: Variable[_]*): String = quick(methods, variables.toList)
-  
-  /**
    * 1. combine methods and variables to from expressions
    * 2. test them with ScalaCheck to sort them into equivalence classes
    * 3. prune redundant equations
+   * 
+   * @return a list of equations for a given list of methods and variables
    */
-  private def quick(methods: ScalaMethods, variables: List[Variable[_]]): String = {
+  def quick(methods: Seq[ScalaFunction], variables: Variable[_]*): String = {
     (methods, variables) |> combine |> classify |> prune |>  (_ mkString "\n")
   } 
 }

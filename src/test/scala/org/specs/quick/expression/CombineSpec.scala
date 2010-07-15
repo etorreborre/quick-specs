@@ -9,7 +9,7 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
   "the combine method" should {
     "combine an expression taking a 2 variables and 1 variable in 2 expressions: a, exp(a, a)" in {
       noDetailedDiffs()
-      combine(plusPlus, List(lists, xs)).expressions.sortBy(_.toString.size).map(_.show).toString must_== 
+      combine(List(plusPlus), List(lists, xs)).expressions.sortBy(_.toString.size).map(_.show).toString must_== 
     	  ("List(xs, lists, lists.++(xs, xs), lists.++(lists.++(xs, xs), xs), "+
     	   "lists.++(xs, lists.++(xs, xs)), lists.++(lists.++(xs, xs), lists.++(xs, xs)))")
     }
@@ -39,11 +39,11 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
     "combine an expression taking a 2 variables and 1 variables in 6 expressions: \n" + 
     "a, b, instance, instance.exp(a, b), instance.exp(b, a), instance.exp(a, a), instance.exp(b, a)" in {
       combineDepth(1)
-      combine(plusPlus, List(lists, xs, ys)).expressions must have size(7)
+      combine(List(plusPlus), List(lists, xs, ys)).expressions must have size(7)
     }
     "combine an expression taking a 2 variables and 1 variables with depth 2" in {
       combineDepth(2)
-      combine(plusPlus, List(lists, xs, ys)).expressions must have size(39)
+      combine(List(plusPlus), List(lists, xs, ys)).expressions must have size(39)
     }
   }
   case class ValuedExpressionReturning(t: String) extends ValuedExpression {
@@ -56,7 +56,7 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
   val listsExp = VariableExpression(lists)
   "applicable parameters for a given method" should {
     "extract the same parameter types" in {
-      MethodExpression(plusPlus).applicableParameters(listsExp, exp1) must_== List(List(listsExp, exp1, exp1))
+      FunctionExpression(plusPlus).applicableParameters(listsExp, exp1) must_== List(List(listsExp, exp1, exp1))
     }
   }
   "A variable can be applied to a method if" >> {
@@ -65,7 +65,7 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
       class T { def method(s: java.io.InputStream) = () }
       val method: ScalaMethod = (new T).accept("method").get("method")
       val instance = VariableExpression(constant(new T))
-	  MethodExpression(method).applicableParameters(instance, variable) must_== List(List(instance, variable))
+	  FunctionExpression(method).applicableParameters(instance, variable) must_== List(List(instance, variable))
 	}
   }
   "A method with no parameters" >> {
@@ -74,12 +74,12 @@ class CombineSpec extends Specification with ScalaMethodsFactory with Expression
       class T { def method() = () }
       val method: ScalaMethod = (new T).accept("method").get("method")
       val instance = VariableExpression(constant(new T))
-	  MethodExpression(method).applicableParameters(instance, variable) must_== List(List(instance))
+	  FunctionExpression(method).applicableParameters(instance, variable) must_== List(List(instance))
 	}  
   }
   "applying expressions to a given expression" should {
     "return a list of expressions" in {
-      val plusPlusExpression = MethodExpression(plusPlus)
+      val plusPlusExpression = FunctionExpression(plusPlus)
       plusPlusExpression.apply(listsExp, exp1) must_== List(ApplicationExpression(plusPlusExpression, List(listsExp, exp1, exp1)))
     }
   }

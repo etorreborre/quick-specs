@@ -10,14 +10,14 @@ trait ExpressionsCombiner extends Log {
   val combine = (combineMethods _).tupled
   val combineDepth = Property(2)
   
-  protected def combineMethods(methods: ScalaMethods, variables: List[Variable[_]]): CombinedExpressions = {
-    debug("methods to combine " + methods.methods)
-    val combined = combineMethodList(methods.methods, variables)
+  protected def combineMethods(methods: Seq[ScalaFunction], variables: Seq[Variable[_]]): CombinedExpressions = {
+    debug("methods to combine " + methods)
+    val combined = combineMethodList(methods, variables)
     debug("combined expressions are " + combined.expressions.mkString(", "))
     combined
   }
-  protected def combineMethodList(methods: Seq[ScalaMethod], variables: Seq[Variable[_]]): CombinedExpressions = {
-    combineExpressions(methods.map(MethodExpression(_)), variables.map(VariableExpression(_)), variables)
+  protected def combineMethodList(methods: Seq[ScalaFunction], variables: Seq[Variable[_]]): CombinedExpressions = {
+    combineExpressions(methods.map(FunctionExpression(_)), variables.map(VariableExpression(_)), variables)
   }
   private def combineExpressions(methods: Seq[ApplicableExpression], parameters: Seq[ValuedExpression], variables: Seq[Variable[_]]): CombinedExpressions = {
 	def applyParams(params: Seq[ValuedExpression]) = {
