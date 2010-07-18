@@ -21,6 +21,7 @@ class ScalaTupledFunction[T, R](aName: String, function: T => R)(implicit t: Man
 	}
   }
   def show(parameters: Seq[String]) = aName + parameters.mkString("(", ", ", ")")
+  override def toString = name
 }
 case class ScalaFunctionApplyException(e: Exception) extends Exception(e)
 
