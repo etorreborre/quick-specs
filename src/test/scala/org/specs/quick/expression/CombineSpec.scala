@@ -6,6 +6,7 @@ import org.scalacheck.Gen
 import org.scalacheck.util._
 
 class CombineSpec extends Specification with ScalaMethodsFactory with ExpressionsCombiner with SampleLists with SampleVariables {
+  noDetailedDiffs
   "the combine method" should {
     "combine an expression taking a 2 variables and 1 variable in 2 expressions: a, exp(a, a)" in {
       noDetailedDiffs()

@@ -3,13 +3,11 @@ import org.specs.util.Classes
 import org.specs.util.TypesMatcher
 import org.specs.specification.Tagged
 
-trait ScalaMethods {
+trait ScalaMethods extends ScalaFunctions[ScalaMethod] {
   /** @return the list of accepted methods */
   def methods: Seq[ScalaMethod]
-  /** @return a ScalaMethods object, with the union of both method sets */
-  def union(other: ScalaMethods): ScalaMethods = ScalaMethodList(methods ++ other.methods)
-  /** @return a ScalaMethods object, with the union of both method sets */
-  def ++(other: ScalaMethods): ScalaMethods = union(other)
+  /** @return the list of functions */
+  def functions: Seq[ScalaMethod] = methods
 }
 /**
  * This class just holds a list of ScalaMethods

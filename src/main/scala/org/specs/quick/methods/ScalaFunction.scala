@@ -10,5 +10,6 @@ trait ScalaFunction {
   def returnType: String
   def parameterTypes: Seq[String]
   def apply(values: Any*): Any
+  def show(parameters: Seq[String]): String
 }
 

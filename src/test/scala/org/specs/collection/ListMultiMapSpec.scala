@@ -1,8 +1,9 @@
 package org.specs.collection
 import org.specs._
 import org.specs.quick._
+import org.specs.quick.methods._
 
-class ListMultiMapSpec extends SpecificationWithJUnit {
+class ListMultiMapSpec extends SpecificationWithJUnit with Sugar {
   val map = new ListMultiMap[Int, String]
   "a multimap allows to sort lists of elements by key" >> {
 	map.put(1, "a", "b") 
@@ -23,20 +24,10 @@ class ListMultiMapSpec extends SpecificationWithJUnit {
 import org.scalacheck._
 class ListMultiMapSpecs extends Specification with QuickSpecs with Sugar {
   implicit val strings = Arbitrary.arbitrary[Array[String]]
-  object ListMultiMapExample {
-	def put(m: ListMultiMap[Int, String], i: Int, s: String): ListMultiMap[Int, String] = { 
-	  m.put(i, s)
-	  m
-    }
-	def get(m: ListMultiMap[Int, String], i: Int): List[String] = m.apply(i)
-  }
   "specs for the put method" in {
-	object listFactory {
-	  def list[T](t: T) = List(t)
-	}
-//	level = Debug
-    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]") ++ 
-    	  listFactory.select("list[String]"), 
+	level = Debug
+    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]").pp.functions.pp :+ 
+    	  new ScalaTupledFunction("list", (s: String) => List(s)), 
     		constant("map", new ListMultiMap[Int, String]), 
     		variable[Int]("i"), 
       		variable[String]("s")).pp.isExpectation

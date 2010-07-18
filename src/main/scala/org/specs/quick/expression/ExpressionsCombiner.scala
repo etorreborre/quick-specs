@@ -7,23 +7,23 @@ import org.specs.log._
  * This trait takes methods and variables and combines them several times
  */
 trait ExpressionsCombiner extends Log {
-  val combine = (combineMethods _).tupled
+  val combine = (combineFunctions _).tupled
   val combineDepth = Property(2)
-  
-  protected def combineMethods(methods: Seq[ScalaFunction], variables: Seq[Variable[_]]): CombinedExpressions = {
-    debug("methods to combine " + methods)
-    val combined = combineMethodList(methods, variables)
+
+  protected def combineFunctions(functions: Seq[ScalaFunction], variables: Seq[Variable[_]]): CombinedExpressions = {
+    debug("functions to combine " + functions)
+    val combined = combineMethodList(functions, variables)
     debug("combined expressions are " + combined.expressions.mkString(", "))
     combined
   }
-  protected def combineMethodList(methods: Seq[ScalaFunction], variables: Seq[Variable[_]]): CombinedExpressions = {
-    combineExpressions(methods.map(FunctionExpression(_)), variables.map(VariableExpression(_)), variables)
+  protected def combineMethodList(functions: Seq[ScalaFunction], variables: Seq[Variable[_]]): CombinedExpressions = {
+    combineExpressions(functions.map(FunctionExpression(_)), variables.map(VariableExpression(_)), variables)
   }
-  private def combineExpressions(methods: Seq[ApplicableExpression], parameters: Seq[ValuedExpression], variables: Seq[Variable[_]]): CombinedExpressions = {
+  private def combineExpressions(functions: Seq[ApplicableExpression], parameters: Seq[ValuedExpression], variables: Seq[Variable[_]]): CombinedExpressions = {
 	def applyParams(params: Seq[ValuedExpression]) = {
 	  val distinctParams = params.distinct
-	  val r = methods.flatMap(_.apply(distinctParams:_*))
-	  debug("trying to apply "+distinctParams+" to "+methods+" = "+r)
+	  val r = functions.flatMap(_.apply(distinctParams:_*))
+	  debug("trying to apply "+distinctParams+" to "+functions+" = "+r)
 	  r
 	}
 	val zeroParamsMethods = applyParams(Nil) 

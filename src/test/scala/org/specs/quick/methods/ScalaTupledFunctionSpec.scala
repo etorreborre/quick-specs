@@ -39,7 +39,7 @@ class ScalaTupledFunctionSpec extends SpecificationWithJUnit {
   import Function._
   "a Scala tupled function with 2 parameters" should {
 	val function = (i: Int, j: String) => 0.0
-	val f = new ScalaTupledFunction(function.tupled)
+	val f = new ScalaTupledFunction("f", function.tupled)
 	"return the proper type for its return value" in {
 	  f.returnType must_== "Double"
 	}  
@@ -56,5 +56,8 @@ class ScalaTupledFunctionSpec extends SpecificationWithJUnit {
    	  val f = new ScalaTupledFunction(((i: Int, j: String) => {error("boom"); ""}).tupled)
  	  f.apply(1, "") must throwA[RuntimeException]
 	}  
+	"show its parameters as a function call: f(a, b)" in {
+	  f.show(List("1", "a")) must_== "f(1, a)"
+	}
   }
 }

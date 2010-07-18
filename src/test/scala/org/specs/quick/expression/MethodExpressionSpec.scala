@@ -20,12 +20,16 @@ with DataTables with DefaultParams {
 	   FunctionExpression(method).applicableParameters(params:_*) must_== result
 	 }
   }
+  val map = new ListMultiMap[Int, String]
+  val put: ScalaMethod = map.select("put[Int, String]").methods(0)
+  val s: VariableExpression[String] = variable[String]("s")
+  val m = FunctionExpression(put)
   "With a method accepting generic parameters" >> {
-	val map = new ListMultiMap[Int, String]
-    val put: ScalaMethod = map.select("put[Int, String]").methods(0)
-    val i: VariableExpression[Int] = variable[Int]("i")
-    val s: VariableExpression[String] = variable[String]("s")
-    val m = FunctionExpression(put)
     m.applicableParameters(constant(map), i, s) must have size(1) and be_==("List(Map(), i, s)") ^^ (_.apply(0).toString)
+  }
+  "A function expression" should {
+	"show its application as a method application: method(param1, param2)" in {
+	  m.show(List("map", "i", "s")) must_== "map.put(i, s)"  	
+	}
   }
 }

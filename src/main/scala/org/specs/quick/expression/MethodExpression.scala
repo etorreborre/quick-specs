@@ -15,8 +15,8 @@ case class FunctionExpression(function: ScalaFunction) extends ApplicableExpress
   lazy val getType = function.returnType
   lazy val methodName = function.name
   override def show = function.name
-
-  def applyValues(values: Seq[Any]) = function.apply(values)
+  def show(parameters: Seq[String]) = function.show(parameters)
+  def applyValues(values: Seq[Any]) = function.apply(values:_*)
   def apply(expressions: ValuedExpression*): Seq[ApplicationExpression] =  {
     applicableParameters(expressions:_*) map (params => ApplicationExpression(this, params))
   }

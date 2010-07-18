@@ -46,6 +46,10 @@ class ScalaMethodSpec extends SpecificationWithJUnit with ScalaMethodsFactory wi
         add1Method.apply(adder, 1) must_== "hello 1"
       }
     }
+    "show its parameters application as a method call: instance.method(a, b)" in {
+	  equalsMethod.show(List("instance", "1")) must_== "instance.equals(1)"
+	}
+
   }
   "A ScalaMethods object" can {
     "be tagged so that only accepted methods are returned with the get method" in {

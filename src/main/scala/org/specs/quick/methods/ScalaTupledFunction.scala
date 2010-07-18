@@ -20,6 +20,7 @@ class ScalaTupledFunction[T, R](aName: String, function: T => R)(implicit t: Man
 	  case e: ClassCastException => throw new ScalaFunctionApplyException(e)
 	}
   }
+  def show(parameters: Seq[String]) = aName + parameters.mkString("(", ", ", ")")
 }
 case class ScalaFunctionApplyException(e: Exception) extends Exception(e)
 
@@ -30,4 +31,5 @@ class ScalaZeroArgFunction[R](aName: String, function: () => R)(implicit r: Mani
   def returnType = r.toString
   def parameterTypes: Seq[String] = Nil
   def apply(values: Any*): Any = function.apply()
+  def show(parameters: Seq[String]) = aName + "()"
 }

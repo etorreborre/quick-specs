@@ -31,6 +31,7 @@ trait ScalaMethod extends Tagged with ScalaFunction {
   lazy val methodName = NameTransformer.decode(method.getName)
 
   def apply(values: Any*): Any
+  def show(parameters: Seq[String]) = parameters(0)+"."+ name + parameters.drop(1).mkString("(", ", ", ")")
 
   override def toString = methodName
   tag(methodName)
@@ -57,7 +58,7 @@ case class InstanceMethod(instance: AnyRef, method: Method) extends ScalaMethod 
  * is an instance of the class that can be used to invoke the method
  */
 case class ClassMethod(instanceType: String, method: Method) extends ScalaMethod {
-  override def parameterTypes: Seq[String] = (super.parameterTypes :+ instanceType)
+  override def parameterTypes: Seq[String] = (instanceType +: super.parameterTypes)
   def apply(values: Any*): Any = {
     require (values.size >= 1)
     if (values.size == 1)
