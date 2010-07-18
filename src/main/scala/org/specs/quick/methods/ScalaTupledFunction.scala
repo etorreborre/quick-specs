@@ -1,5 +1,6 @@
 package org.specs.quick.methods
 import Function._
+import org.specs.quick.Functions._
 
 class ScalaTupledFunction[T, R](aName: String, function: T => R)(implicit t: Manifest[T], r: Manifest[R])
   extends ScalaFunction {
@@ -18,14 +19,6 @@ class ScalaTupledFunction[T, R](aName: String, function: T => R)(implicit t: Man
 	} catch {
 	  case e: ClassCastException => throw new ScalaFunctionApplyException(e)
 	}
-  }
-  private def toTuple(list: Seq[Any]): Any = {
-	if (list.size == 1)
-	  list(0)
-	else if (list.size == 2)
-	  (list(0), list(1))
-	else if (list.size == 3)
-	  (list(0), list(1), list(2))
   }
 }
 case class ScalaFunctionApplyException(e: Exception) extends Exception(e)

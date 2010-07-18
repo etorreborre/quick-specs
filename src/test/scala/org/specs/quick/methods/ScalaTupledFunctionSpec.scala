@@ -46,5 +46,15 @@ class ScalaTupledFunctionSpec extends SpecificationWithJUnit {
 	"return the proper types for its parameter" in {
 	  f.parameterTypes must_== List("Int", "java.lang.String")
 	}  
+	"apply the passed parameters to the underlying function" in {
+	  f.apply(1, "hello") must_== 0.0
+	}  
+	"throw an exception if the wrong parameter types are applied" in {
+	  f.apply("", 2) must throwA[ScalaFunctionApplyException]
+	}  
+	"rethrow the exception if the underlying function throws an exception" in {
+   	  val f = new ScalaTupledFunction(((i: Int, j: String) => {error("boom"); ""}).tupled)
+ 	  f.apply(1, "") must throwA[RuntimeException]
+	}  
   }
 }
