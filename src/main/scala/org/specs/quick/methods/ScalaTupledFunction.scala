@@ -15,7 +15,8 @@ class ScalaTupledFunction[T, R](aName: String, function: T => R)(implicit t: Man
   }
   def apply(values: Any*): Any = {
 	try {
-	  function.apply(toTuple(values).asInstanceOf[T])
+	  val result = function.apply(toTuple(values).asInstanceOf[T])
+	  result
 	} catch {
 	  case e: ClassCastException => throw new ScalaFunctionApplyException(e)
 	}

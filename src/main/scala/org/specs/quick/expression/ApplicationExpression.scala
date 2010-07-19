@@ -11,7 +11,8 @@ case class ApplicationExpression(function: FunctionExpression, parameters: Seq[V
   def getType = function.getType
   def value = {
     try {
-      function.applyValues(parameters.map(_.value))
+      val r = function.applyValues(parameters.map(_.value))
+      r
     } catch {
       case e => e
     }

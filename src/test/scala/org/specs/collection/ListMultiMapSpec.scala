@@ -23,7 +23,7 @@ class ListMultiMapSpec extends SpecificationWithJUnit with Sugar {
 }
 import org.scalacheck._
 class ListMultiMapSpecs extends Specification with QuickSpecs with Sugar {
-  implicit val strings = Arbitrary.arbitrary[Array[String]]
+  implicit val strings: Arbitrary[String] = Arbitrary(Gen.oneOf("a", "b", "c"))
   "specs for the put method" in {
 	level = Debug
 	implicit val maps: Arbitrary[ListMultiMap[Int, String]] = Arbitrary(Gen.value(new ListMultiMap[Int, String]))
