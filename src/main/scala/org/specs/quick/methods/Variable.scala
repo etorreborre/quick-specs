@@ -37,6 +37,14 @@ class Constant[A](val name: String, v: A)(implicit m: ClassManifest[A]) extends 
   def evaluate = v
 }
 /**
+ * This variable always return a new evaluation on each call
+ */
+class FreshConstant[A](val name: String, v: =>A)(implicit m: ClassManifest[A]) extends Variable[A] {
+  def getType = m.toString
+  def value = evaluate
+  def evaluate = v
+}
+/**
  * factory method to create an Arbitrary variable that will change its value on each evaluate call
  */
 object Variable {

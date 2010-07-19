@@ -93,7 +93,8 @@ trait ScalaMethodsFactory {
   implicit def toScalaClassMethods(m: ScalaMethod) = new ScalaClassMethods(m.declaringClass, List(m))
   import org.scalacheck._
   def variable [A](name: String)(implicit m: ClassManifest[A], arb: Arbitrary[A], params: Gen.Params) = new ArbitraryVariable(name)(m, arb, params)
-  def constant[A](name: String, v: A)(implicit m: ClassManifest[A]) = new Constant(name, v)(m)
-  implicit def constant[A](v: A)(implicit m: ClassManifest[A]) = new Constant(v.toString, v)(m)
+  def constant[A : ClassManifest](name: String, v: A) = new Constant(name, v)
+  def freshConstant[A : ClassManifest](name: String, v: =>A) = new FreshConstant(name, v)
+  implicit def constant[A : ClassManifest](v: A) = new Constant(v.toString, v)
 
 }

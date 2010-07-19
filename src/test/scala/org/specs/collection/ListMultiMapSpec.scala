@@ -25,12 +25,10 @@ import org.scalacheck._
 class ListMultiMapSpecs extends Specification with QuickSpecs with Sugar {
   implicit val strings: Arbitrary[String] = Arbitrary(Gen.oneOf("a", "b", "c"))
   "specs for the put method" in {
-	level = Debug
-	implicit val maps: Arbitrary[ListMultiMap[Int, String]] = Arbitrary(Gen.value(new ListMultiMap[Int, String]))
-    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]").pp.functions.pp :+ 
+    quick(new ListMultiMap[Int, String].select("put[Int, String]", "apply[Int]").functions :+ 
     	  new ScalaTupledFunction("list", (s: String) => List(s)), 
-    		variable[ListMultiMap[Int, String]]("map"), 
+    		freshConstant("map", new ListMultiMap[Int, String]), 
     		variable[Int]("i"), 
-      		variable[String]("s")).pp.isExpectation
+      		variable[String]("s")) must_== "[list(s) == map.put(i, s).apply(i)]"
   }
 }
