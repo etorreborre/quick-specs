@@ -36,7 +36,7 @@ object ArbitraryVariableSpec extends Specification with ScalaCheck with Arbitrar
   }
 }
 trait GenerationParams {
-  implicit val params = Gen.defaultParams
+  implicit val params = Gen.Params()
 }
 trait ConstVariables extends GenerationParams { 
   implicit val constListIntVariable: Arbitrary[Variable[List[Int]]]= Arbitrary(Constant("list(1)")(List(1)))

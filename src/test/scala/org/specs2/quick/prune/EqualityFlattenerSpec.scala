@@ -9,10 +9,10 @@ import matcher._
 
 class EqualityFlattenerSpec extends Specification with EqualityFlattener with DataTables {
   "new Curry elements can be created from others" >> {
-  	"element"   									| "result"     |>
-  	Curry("a")  									! Curry("a")   |
-  	Apply(Curry("a"), Curry("b")) ! Curry("ab")  |
-	  Apply(Apply(Curry("a"), Curry("b")), Curry("c"))! Curry("abc") | { (element, result) =>
+  	"element"   									                     | "result"     |
+  	 (Curry("a"):Curried)  									           ! Curry("a")   |
+  	 Apply(Curry("a"), Curry("b"))                     ! Curry("ab")  |
+	   Apply(Apply(Curry("a"), Curry("b")), Curry("c"))  ! Curry("abc") |> { (element, result) =>
       newCurry(element) must_== result
 	  }
   }

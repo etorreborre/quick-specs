@@ -18,7 +18,7 @@ class ClassifySpec extends Specification with ExpressionsClassifier with Express
 	 	    "[xs == lists.++(xs, lists.nil())]",
      	  "[lists.nil() == lists.++(lists.nil(), lists.nil())]")
 	    val result = classify(combined).map(_.toString) 
-	    result must contain(_:String).forall(expected)
+	    ((s: String) => result must contain(s)).forall(expected)
 	  }  
 	  "return equalities for tautologies" in {
 	    classify(combined).map(_.toString) must contain("[xs == xs]") 

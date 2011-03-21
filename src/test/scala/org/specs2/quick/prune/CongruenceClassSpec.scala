@@ -20,9 +20,7 @@ class CongruenceClassSpec extends Specification with SampleExpressions with Expr
 	    "with 2 transitive equalities" >> {
 	      congruence.add(Equality(Curry("a"), Curry("b")))
 	      congruence.add(Equality(Curry("b"), Curry("c")))
-	      congruence.representative must havePair(Curry("a") -> Curry("b")) and 
-	                                     havePair(Curry("b") -> Curry("b")) and
-	                                     havePair(Curry("c") -> Curry("b"))
+	      congruence.representative must havePairs(Curry("a") -> Curry("b"), Curry("b") -> Curry("b"), Curry("c") -> Curry("b"))
 	    }
 	    "with an application" >> {
 	      congruence.add(Equality(Apply(Curry("a"), Curry("b")), Curry("c")))

@@ -9,7 +9,7 @@ import mutable._
 
 class ExpressionCurrierSpec extends Specification with ExpressionCurrier {
   import CurriedParser._
-  implicit val params = Gen.defaultParams
+  implicit val params = Gen.Params()
   val arbVariable = Variable[Int]("arb")
   val constVariable = Constant("const")(1)
   val arbVariableExp = VariableExpression(arbVariable)

@@ -13,12 +13,12 @@ with DataTables with DefaultParams {
   val ls = VariableExpression(constant(Lists))
   "applying valued expressions to a method expression must return all the possible applications" >> {
 
-  	 "method"  | "params"  			   | "result"               					         |
-	   listsName !  List(ls) 			   ! List(List(ls))		     				             |
+  	 "method"  | "params"  			                      | "result"               					         |
+	   listsName !  (List(ls): List[ValuedExpression]) ! (List(List(ls)): List[Any])	|
 	   plusPlus  !  List(ls, xs) 		 ! List(List(ls,xs, xs))     				         |
 	   plusPlus  !  List(ls, xs, ys) ! List(List(ls, xs, xs), List(ls, xs, ys),
 			                               List(ls, ys, xs), List(ls, ys, ys))	     |> { (method, params, result) =>
-	     FunctionExpression(method).applicableParameters(params:_*) must_== result
+	     FunctionExpression(method).applicableParameters(params:_*) must be_===(result)
 	   }
   }
   val map = new ListMultiMap[Int, String]

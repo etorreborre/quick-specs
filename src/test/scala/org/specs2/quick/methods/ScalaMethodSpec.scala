@@ -66,9 +66,10 @@ class ScalaMethodSpec extends Specification with ScalaMethodsFactory with DataTa
   "The name of a ScalaMethod" should {
     "replace obfuscated characters when displaying the method name" in {
       class o { override def toString = "object" }
-      "object"                     | "methodName" |>
-        new o { def ++ = () }      ! "++"         |
-        new o { def -- = () }      ! "--"         | { (o: Object, m: String) =>
+
+      "object"                       | "methodName" |>
+      (new o { def ++ = () }:AnyRef) ! "++"         |
+       new o { def -- = () }         ! "--"         | { (o: AnyRef, m: String) =>
           ScalaMethods.create(o).getOwn(0).methodName must_== m
       }
     }
