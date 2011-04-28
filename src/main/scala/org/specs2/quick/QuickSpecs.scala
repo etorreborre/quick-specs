@@ -5,7 +5,6 @@ import expression._
 import classify._
 import prune._
 import org.scalacheck._
-import quick.Functions
 
 /**
  * This trait allows the creation of equations satisfied by some methods/functions of a Scala object,

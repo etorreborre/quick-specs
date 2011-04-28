@@ -11,10 +11,9 @@ class QuickSpecsSpec extends Specification with QuickSpecs with SampleLists with
     "return a list of equations for the most simple case" in {
       combineDepth(1)
       val equations = quick(Lists.find("\\+\\+").toList, lists, xs, nil).split("\n").toList
-      equations must have size(2)
       "[xs == lists.++(lists.nil(), xs)]" +
       "[xs == lists.++(xs, lists.nil())]"
-      success
+      equations must have size(2)
     }
     "return a list of equations for a case with 2 variables and one operation" in {
       combineDepth(1)

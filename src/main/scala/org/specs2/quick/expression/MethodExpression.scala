@@ -1,8 +1,9 @@
 package org.specs2
 package quick
 package expression
+
+import org.specs2.collection.CartesianProduct._
 import methods._
-import collection.CartesianProduct._
 import util.TypesMatcher
 
 /**
@@ -20,16 +21,20 @@ case class FunctionExpression(function: ScalaFunction) extends ApplicableExpress
   def show(parameters: Seq[String]) = function.show(parameters)
   def applyValues(values: Seq[Any]) = function.apply(values:_*)
   def apply(expressions: ValuedExpression*): Seq[ApplicationExpression] =  {
-    applicableParameters(expressions:_*) map (params => ApplicationExpression(this, params))
+    if (expressions.isEmpty)
+      Nil
+    else
+      applicableParameters(expressions:_*) map (params => ApplicationExpression(this, params))
   }
 
   /**
    * for each variable we keep a list of all the expressions that have the same type
    */
   private[expression] def applicableParameters(expressions: ValuedExpression*): Seq[Seq[ValuedExpression]] = {
-	val applicable: Seq[Seq[ValuedExpression]] = function.parameterTypes.map {	t => 
-	  expressions.toList.filter(e => typesMatch(e.getType, t))
+	  val applicable: Seq[Seq[ValuedExpression]] = function.parameterTypes.map {	t =>
+	    expressions.toList.filter(e => typesMatch(e.getType, t))
     }
-	cartesianProduct(applicable).distinct
+	  val product = cartesianProduct(applicable.filter(_.nonEmpty))
+    product.distinct
   }
 }

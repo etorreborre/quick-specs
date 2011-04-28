@@ -1,5 +1,5 @@
 package org.specs2
-package quick.collection
+package collection
 
 /**
  * helper trait to create the cartesian product of several Seqs

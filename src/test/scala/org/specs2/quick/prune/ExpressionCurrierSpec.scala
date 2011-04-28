@@ -7,9 +7,11 @@ import expression._
 import org.scalacheck.Gen
 import mutable._
 
-class ExpressionCurrierSpec extends Specification with ExpressionCurrier {
+class ExpressionCurrierSpec extends Specification with ExpressionCurrier with ScalaCheck {
   import CurriedParser._
+
   implicit val params = Gen.Params()
+
   val arbVariable = Variable[Int]("arb")
   val constVariable = Constant("const")(1)
   val arbVariableExp = VariableExpression(arbVariable)

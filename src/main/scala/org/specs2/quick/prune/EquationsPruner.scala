@@ -8,7 +8,7 @@ import EqualityFlattener._
 import ExpressionCurrier._
 import CongruenceClosure._
 import Functions._
-import collection.CartesianProduct._
+import org.specs2.collection.CartesianProduct._
 import CongruenceClass._
 import quick.Functions
 import util.TypesMatcher

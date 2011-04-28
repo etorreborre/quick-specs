@@ -19,6 +19,7 @@ case class ApplicationExpression(function: FunctionExpression, parameters: Seq[V
     }
   }
   override def show = function.show(parameters.map(_.show))
+  override def toString = show
   def substitute(bindings: Map[Expression, ValuedExpression]) = {
 	 ApplicationExpression(function, parameters.map(_.substitute(bindings)))
   }

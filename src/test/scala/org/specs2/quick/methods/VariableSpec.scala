@@ -1,40 +1,38 @@
 package org.specs2
 package quick
 package methods
-import mutable._
 import org.scalacheck._
 
-class VariableSpec extends Specification {
-  include(AllVariablesSpec)
-  include(ConstVariableSpec)
-  include(ArbitraryVariableSpec)
-}
-object AllVariablesSpec extends Specification with ScalaCheck with AnyVariables {
-  "There are 2 kinds of variables: arbitrary and constants\n" +
-  "A variable" should {
-    "have a getType method returning the class name of its type" in check { v: Variable[Int] =>
-	    v.getType must contain("Int")
-	  }
-    "have a getType method returning its full type name" in check { v: Variable[List[Int]] =>
-	    v.getType must contain("List[Int]")
-	  }
-    "have a show method returning its name - this is used in displaying the equations" in check { v: Variable[Int] =>
-      v.show === "name"
-    }
+class VariableSpec extends Specification with ScalaCheck { def is =
+
+  "There are 2 kinds of variables: arbitrary and constants"                                                             ^
+                                                                                                                        p^
+  "Any variable should"                                                                                                 ^
+    "have a getType method returning the class name of its type"                                                        ! anyVar.e1^
+    "have a getType method returning its type name including type parameters"                                           ! anyVar.e2^
+    "have a show method returning its name - this is used in displaying the equations"                                  ! anyVar.e3^
+                                                                                                                        p^
+  "A constant variable should"                                                                                          ^
+    "have constant values"                                                                                              ! constVar.e1^
+                                                                                                                        p^
+  "An arbitrary variable should"                                                                                        ^
+    "have random values"                                                                                                ! arbVar.e1^
+                                                                                                                        end
+
+
+  object anyVar extends AnyVariables {
+    def e1 = check { v: Variable[Int] => v.getType must contain("Int") }
+    def e2 = check { v: Variable[List[Int]] => v.getType must contain("List[Int]") }
+    def e3 = check { v: Variable[Int] =>  v.show === "name" }
+  }
+  object constVar extends ConstVariables {
+    def e1 = check {  v: Variable[Int] => v.value === 1 }
+  }
+  object arbVar extends ArbitraryVariables {
+    def e1 = check { v: Variable[Int] => (1 to 100).toList.map(i => v.evaluate) must have(_ < 0)  }
   }
 }
-object ConstVariableSpec extends Specification with ScalaCheck with ConstVariables {
-  "A constant variable".title
-  "A constant variable should have constant values" in check {  v: Variable[Int] =>
-    v.value === 1
-  }
-}
-object ArbitraryVariableSpec extends Specification with ScalaCheck with ArbitraryVariables {
-  "An arbitrary variable".title
-  "An arbitrary variable should have random values" in check {  v: Variable[Int] =>
-    (1 to 100).toList.map(i => v.evaluate).exists(_ < 0) must beTrue
-  }
-}
+
 trait GenerationParams {
   implicit val params = Gen.Params()
 }
