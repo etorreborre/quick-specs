@@ -26,7 +26,7 @@ class QuickSpecs2Spec extends Specification with QuickSpecs with SampleLists { d
 	  val nil = constant("nil", Lists.nil[Int])
     val xs = Variable[List[Int]]("xs")
     val ys = Variable[List[Int]]("ys")
-      combineDepth(1)
+      implicit val args = Args(combineDepth = 1)
       val equations = quick(Lists.find("++").toList, xs, nil)
       "[xs == lists.++(nil, xs)]" +
       "[xs == lists.++(xs, nil)]"

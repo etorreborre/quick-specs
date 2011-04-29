@@ -9,26 +9,26 @@ import org.specs2.mutable._
 
 class EquationsPrunerSpec extends org.specs2.mutable.Specification with EquationsPruner with SampleExpressions {
   "pruning equations must remove b = a if a = b is already there" in {
-	  prune(List(Equality(a, b), Equality(b, a))).mkString must_== "[a == b]" 
+	  prune.apply(List(Equality(a, b), Equality(b, a))).mkString must_== "[a == b]"
   }
   "pruning equations must not remove c = d if a = b is already there" in {
-	  prune(List(Equality(a, b), Equality(c, d))).mkString must_== "[a == b][c == d]" 
+	  prune.apply(List(Equality(a, b), Equality(c, d))).mkString must_== "[a == b][c == d]"
   }
   "pruning equations must not remove d + e = f if a + b = c is already there" in {
-	  prune(List(Equality(apply("+", a, b), c), Equality(apply("+", d, e), f))).mkString must_== 
+	  prune.apply(List(Equality(apply("+", a, b), c), Equality(apply("+", d, e), f))).mkString must_==
 		  "[a.+(b) == c][d.+(e) == f]" 
   }
   "pruning equations a + b = c, c = a + b" in {
-	  prune(List(Equality(apply("+", xs, nil), xs), Equality(xs, apply("+", xs, nil)))).mkString must_== "[xs.+(nil) == xs]" 
+	  prune.apply(List(Equality(apply("+", xs, nil), xs), Equality(xs, apply("+", xs, nil)))).mkString must_== "[xs.+(nil) == xs]"
   }
   "pruning equations where there is a substitution" in {
-	  prune(List(Equality(apply("+", nil, nil), nil), Equality(apply("+", xs, nil), xs))).mkString must_== "[xs.+(nil) == xs]" 
+	  prune.apply(List(Equality(apply("+", nil, nil), nil), Equality(apply("+", xs, nil), xs))).mkString must_== "[xs.+(nil) == xs]"
   }
   "pruning equations where there is a substitution of a variable" in {
-	  prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ys, nil), ys))).mkString must_== "[xs.+(nil) == xs]" 
+	  prune.apply(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ys, nil), ys))).mkString must_== "[xs.+(nil) == xs]"
   }
   "not pruning equations where there is not a substitution of a variable" in {
-	  prune(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nilInts), ints))).mkString must_== 
+	  prune.apply(List(Equality(apply("+", xs, nil), xs), Equality(apply("+", ints, nilInts), ints))).mkString must_==
 		  "[xs.+(nil) == xs][ints.+(nilInts) == ints]" 
   }
   "the list of all bindings for an expression must be the cartesian product" +

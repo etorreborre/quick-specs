@@ -22,7 +22,7 @@ trait QuickSpecs extends ScalaMethodsFactory with ExpressionsCombiner with Expre
    * 
    * @return a list of equations for a given list of methods and variables
    */
-  def quick[T <: ScalaFunction](functions: Seq[T], variables: Variable[_]*): String = {
+  def quick[T <: ScalaFunction](functions: Seq[T], variables: Variable[_]*)(implicit args: Args = Args()): String = {
     (functions, variables) |> combine |> classify |> prune |>  (_ mkString "\n")
   } 
 }

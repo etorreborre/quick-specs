@@ -1,6 +1,7 @@
 package org.specs2
 package quick
 package prune
+
 import expression._
 import util.TypesMatcher
 import equality._
@@ -14,37 +15,39 @@ import quick.Functions
 import util.TypesMatcher
 
 trait EquationsPruner extends TypesMatcher { outer =>
-  val prune = pruneEquations _
+  def prune(implicit args: Args = Args()) = pruneEquations _
   
-  private def pruneEquations(equalities: List[Equality[ValuedExpression]]): List[Equality[_]] = { 
+  private def pruneEquations(equalities: List[Equality[ValuedExpression]])(implicit args: Args = Args()): List[Equality[_]] = {
     val congruence = new CongruenceClass {}
     val universe = equalities.foldLeft(Nil:List[ValuedExpression]) { (res, cur) =>
       val Equality(a, b) = cur
       a +: b +: res
     }
-	  println("The equalities are "+equalities.mkString("\n"))
-	  println("The universe is "+universe)
+	  if (args.verbose.prune) {
+      println("The equalities are "+equalities.mkString("\n"))
+      println("The universe is "+universe)
+    }
 	  val result = new scala.collection.mutable.ListBuffer[Equality[ValuedExpression]]
 	  equalities.sortBy(e => e)(equalityOrdering).foreach { cur =>
 	    if (congruence.isCongruent(cur)) {
-	 	    println(cur + " is congruent so is not added to the congruence structure")
+	 	    if (args.verbose.prune) println(cur + " is congruent so is not added to the congruence structure")
 	    }
 	    else {
-	 	    println(cur + " IS A NEW EQUATION!")
+	 	    if (args.verbose.prune) println(cur + " IS A NEW EQUATION!")
 	  	  congruence.add(cur)
 	  	  if (!cur.isTautology) result += cur
 
 	  	  val Equality(a: ValuedExpression, b: ValuedExpression) = cur
-	 	    println("The subsitutes for "+cur+" are "+substitute(a, b, universe))
+	 	    if (args.verbose.prune) println("The subsitutes for "+cur+" are "+substitute(a, b, universe))
 	  	  substitute(a, b, universe).foreach { sub =>
 	  	    val Equality(u, v) = sub
 	  	    if (universe.contains(u) || universe.contains(v)) {
 	  	   	  congruence.add(sub)
 	  	   	  if (result.contains(sub)) {
     	   	    result -= sub
-    	   	    println("removing "+sub+" -> "+result)
+    	   	    if (args.verbose.prune) println("removing "+sub+" -> "+result)
     	   	  }
-          } else println(u+" and "+v+" don't belong to the universe")
+          } else if (args.verbose.prune) println(u+" and "+v+" don't belong to the universe")
 	  	  }
 	    }
 	  }

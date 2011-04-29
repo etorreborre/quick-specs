@@ -13,13 +13,15 @@ import expression.ValuedExpression
  */
 trait ExpressionsClassifier {
   implicit val partitionsNumber = 4
-  val classify = (c: CombinedExpressions) => classifyExpressions(c)(partitionsNumber) 
+  def classify(implicit args: Args = Args()) = (c: CombinedExpressions) => classifyExpressions(c)(partitionsNumber)
   
-  private def classifyExpressions(combined: CombinedExpressions)(number: Int = partitionsNumber): List[Equality[ValuedExpression]] = {
-	val partitions = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
-	val result = partitions.flatMap(_.equalities).sortBy(_.toString.size).distinct
-	println("partitions "+partitions.mkString("\n"))
-	println("classified expressions "+result)
-	result
+  private def classifyExpressions(combined: CombinedExpressions)(number: Int = partitionsNumber)(implicit args: Args): List[Equality[ValuedExpression]] = {
+  	val partitions = new EquivalenceClass(combined.expressions, combined.variables).partition(number)
+  	val result = partitions.flatMap(_.equalities).sortBy(_.toString.size).distinct
+  	if (args.verbose.classify) {
+      println("partitions "+partitions.mkString("\n"))
+      println("classified expressions "+result)
+    }
+  	result
   }
 }

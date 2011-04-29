@@ -18,7 +18,7 @@ class EqualityFlattenerSpec extends Specification with EqualityFlattener with Da
   }
   "A curried equality" should {
     "not flatten Curry(a) = Curry(b)" in {
-      flattenEqualities(Equality(Curry("a"), Curry("b")))(0) must be_==(Equality(Curry("a"), Curry("b")))
+      flattenEqualities(Equality(Curry("a"), Curry("b")))(Args(combineDepth = 0)) must be_==(Equality(Curry("a"), Curry("b")))
     }
     "flatten Apply(Curry(a), Curry(b)) = Curry(c)" in {
       flattenEqualities(Equality(Apply(Curry("a"), Curry("b")), Curry("c"))) must_== 
